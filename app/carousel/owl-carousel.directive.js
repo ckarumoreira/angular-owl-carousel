@@ -174,16 +174,25 @@
             }
 
             function InitNav() {
+                var divNavPrev = angular.element('<div class="owl-prev"></div>'),
+                    divNavNext = angular.element('<div class="owl-next"></div>'),
+                    arrNavText = scope.config.navText;
+
                 if (scope.config.nav) {
-                    var navPrev = angular.element('<div class="owl-prev">prev</div>'),
-                        navNext = angular.element('<div class="owl-next">next</div>');
+                    if (arrNavText && arrNavText instanceof Array && arrNavText.length == 2) {
+                        divNavNext.text(scope.config.navText[0]);
+                        divNavPrev.text(scope.config.navText[1]);
+                    } else {
+                        divNavNext.text('next');
+                        divNavPrev.text('prev');
+                    }
                         
-                    navPrev.bind('click', MoveToPrevious)
-                    navNext.bind('click', MoveToNext);
+                    divNavPrev.bind('click', MoveToPrevious)
+                    divNavNext.bind('click', MoveToNext);
 
                     divOwlNav
-                        .append(navPrev)
-                        .append(navNext);
+                        .append(divNavPrev)
+                        .append(divNavNext);
                 } else {
                     divOwlNav.addClass('disabled');
                 }

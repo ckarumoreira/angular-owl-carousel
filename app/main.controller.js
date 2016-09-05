@@ -29,7 +29,8 @@
             margin: 15,
             dots: true,
             dotsEach: 7,
-            nav: true
+            nav: true,
+            navText: ['proximo', 'anterior']
         };
     }
 
