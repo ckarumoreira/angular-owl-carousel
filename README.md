@@ -4,7 +4,7 @@ OwlCarousel Angular Directive
 A full port of current version of OwlCarousel2 (JQuery-less, using only jqLite from Angular).
 
 # Dependencies
-* OwlCarousel CSS
+* OwlCarousel (CSS only)
 * AngularJS
 
 # Already Covered Configurations
