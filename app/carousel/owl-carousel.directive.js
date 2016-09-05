@@ -16,7 +16,8 @@
                 intPosition = 0,
                 divContainer = element,
                 intItemCount = scope.items.length,
-                intMaxItemWindow = scope.config.items,
+                intMaxItemWindow = scope.config.items || 3,
+                intStagePadding = scope.config.stagePadding || 0,
                 intDotsEach = scope.config.dotsEach || intMaxItemWindow,
                 intItemsOnScreen = intItemCount < intMaxItemWindow ? intItemCount : intMaxItemWindow;
             
@@ -50,6 +51,9 @@
                 scope.$digest();
             });
 
+            intPosition = (scope.config.startPosition || 1) - 1;
+            MoveToItem(intPosition);
+
             function MarkActive(intActiveStartIndex, intActiveEndIndex) {
                 var arrItems = divOwlStage.children(),
                     divOwlCurrentItem = undefined;
@@ -69,9 +73,10 @@
             function SetItemSize() {
                 var intWindowWidth = $window.innerWidth,
                     intMarginPerItem = scope.config.margin,
+                    intStagePaddingTotalSize = intStagePadding * 2,
                     intMarginTotalSize = intItemsOnScreen * intMarginPerItem;
                 
-                intCarouselItemWidth = parseInt((intWindowWidth - intMarginTotalSize) / intItemsOnScreen);
+                intCarouselItemWidth = parseInt((intWindowWidth - intMarginTotalSize - intStagePaddingTotalSize) / intItemsOnScreen);
                 intItemWholeWidth = intCarouselItemWidth + intMarginPerItem;
                 intStageWidth = intItemWholeWidth * intItemCount;
                 
@@ -112,6 +117,12 @@
                 var bolDragging = false,
                     intDragStart = 0,
                     intTranslateX = 0;
+
+                divOwlStageOuter
+                    .css({
+                        'padding-left':  intStagePadding + 'px',
+                        'padding-right': intStagePadding + 'px'
+                    });
 
                 divOwlStage.bind('mousedown', StartDrag);
                 divOwlStage.bind('mousemove', OnDrag);
