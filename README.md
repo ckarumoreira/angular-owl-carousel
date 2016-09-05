@@ -40,7 +40,7 @@ A full port of current version of OwlCarousel2 (JQuery-less, using only jqLite f
 * fluidSpeed
 * autoplaySpeed
 * navSpeed
-* dosSpeed
+* dotSpeed
 * dragEndSpeed
 * callbacks
 * responsive
