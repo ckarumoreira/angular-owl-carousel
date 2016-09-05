@@ -13,6 +13,7 @@ A full port of current version of OwlCarousel2 (JQuery-less, using only jqLite f
 * dots
 * dotsEach
 * nav
+* navText
 
 # Pending Configurations
 * loop
@@ -28,7 +29,6 @@ A full port of current version of OwlCarousel2 (JQuery-less, using only jqLite f
 * startPosition
 * URLhashListener
 * navRewind
-* navText
 * slideBy
 * dotData
 * lazyLoad
