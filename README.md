@@ -16,6 +16,8 @@ A full port of current version of OwlCarousel2 (JQuery-less, using only jqLite f
 * navText
 * stagePadding
 * startPosition
+* navSpeed
+* dotsSpeed
 
 # Pending Configurations
 * loop
@@ -39,8 +41,6 @@ A full port of current version of OwlCarousel2 (JQuery-less, using only jqLite f
 * smartSpeed
 * fluidSpeed
 * autoplaySpeed
-* navSpeed
-* dotSpeed
 * dragEndSpeed
 * callbacks
 * responsive
