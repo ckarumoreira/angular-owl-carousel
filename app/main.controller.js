@@ -30,6 +30,8 @@
             dots: true,
             dotsEach: 7,
             nav: true,
+            stagePadding: 0,
+            startPosition: 5,
             navText: ['proximo', 'anterior']
         };
     }

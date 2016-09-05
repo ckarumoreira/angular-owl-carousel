@@ -14,6 +14,8 @@ A full port of current version of OwlCarousel2 (JQuery-less, using only jqLite f
 * dotsEach
 * nav
 * navText
+* stagePadding
+* startPosition
 
 # Pending Configurations
 * loop
@@ -22,11 +24,9 @@ A full port of current version of OwlCarousel2 (JQuery-less, using only jqLite f
 * touchDrag
 * pullDrag
 * freeDrag
-* stagePadding
 * merge
 * mergeFit
 * autoWidth
-* startPosition
 * URLhashListener
 * navRewind
 * slideBy
