@@ -187,7 +187,8 @@
             function InitNav() {
                 var divNavPrev = angular.element('<div class="owl-prev"></div>'),
                     divNavNext = angular.element('<div class="owl-next"></div>'),
-                    arrNavText = scope.config.navText;
+                    arrNavText = scope.config.navText,
+                    intNavSpeed = scope.config.navSpeed || 0.25;
 
                 if (scope.config.nav) {
                     if (arrNavText && arrNavText instanceof Array && arrNavText.length == 2) {
@@ -213,7 +214,7 @@
                         intPosition++;
                     }
 
-                    MoveToItem(intPosition);
+                    MoveToItem(intPosition, intNavSpeed);
                     event.preventDefault();
                 }
 
@@ -222,7 +223,7 @@
                         intPosition--;
                     }
 
-                    MoveToItem(intPosition);
+                    MoveToItem(intPosition, intNavSpeed);
                     event.preventDefault();
                 }
             }
@@ -231,6 +232,7 @@
                 var strDivDotElement = '<div class="owl-dot"><span></span></div>',
                     intDotCount = Math.ceil(intItemCount / intDotsEach),
                     intActiveDot = Math.ceil(intPosition / intDotsEach),
+                    intDotsSpeed = scope.config.dotsSpeed || 0.25,
                     divCurrentDot = undefined,
                     divActiveDot = undefined;
 
@@ -241,7 +243,7 @@
                         var divDot = angular.element(this),
                             intDotPosition = divDot.data('dot-position');
                         
-                        MoveToItem(intDotsEach * intDotPosition);
+                        MoveToItem(intDotsEach * intDotPosition, intDotsSpeed);
                     });
                     
                     divOwlDots.append(divCurrentDot);
@@ -264,12 +266,12 @@
                     .addClass('owl-theme');
             }
 
-            function DragToPosition(intPosition, transition) {
-                divOwlStage.css('transition', transition || '0s');
+            function DragToPosition(intPosition, strTransition) {
+                divOwlStage.css('transition', strTransition || '0s');
                 divOwlStage.css('transform', 'translateX(' + intPosition + 'px)');
             }
 
-            function MoveToItem(intTargetPosition) {
+            function MoveToItem(intTargetPosition, intSpeed) {
                 var intTranslation = arrBestTranslate[intTargetPosition],
                     intActiveDot = Math.floor(intTargetPosition / intDotsEach),
                     divCurrentDot = undefined,
@@ -277,7 +279,7 @@
 
                 MarkActive(intTargetPosition, intTargetPosition + intItemsOnScreen);
 
-                DragToPosition(intTranslation, '0.25s');
+                DragToPosition(intTranslation, (intSpeed || 0.25) + 's');
 
                 intPosition = intTargetPosition;
                 

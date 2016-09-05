@@ -32,6 +32,8 @@
             nav: true,
             stagePadding: 0,
             startPosition: 5,
+            dotsSpeed: 0.5,
+            navSpeed: 0.5,
             navText: ['proximo', 'anterior']
         };
     }
