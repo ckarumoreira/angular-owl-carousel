@@ -7,6 +7,13 @@ A full port of current version of OwlCarousel2 (JQuery-less, using only jqLite f
 * OwlCarousel2 (CSS only)
 * AngularJS
 
+# Usage
+```html
+<!-- apply "owl-carousel" with its config and items -->
+<div class="owl-carousel" config="owlCarouselConfig" items="owlCarouselItems">
+</div>
+```
+
 # Already Covered Configurations
 * items 
 * margin
