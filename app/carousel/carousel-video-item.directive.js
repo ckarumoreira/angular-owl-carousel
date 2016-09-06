@@ -1,5 +1,5 @@
 (function () {
-    angular.module('main')
+    angular.module('redeUi')
     .directive('carouselVideoItem', CarouselVideoItemDirective);
     
     CarouselVideoItemDirective.$inject = ['$window', '$compile'];
