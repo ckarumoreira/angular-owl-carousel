@@ -1,3 +1,3 @@
 (function () {
-    angular.module('main', []);
+    angular.module('redeUi', []);
 })();

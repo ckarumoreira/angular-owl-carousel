@@ -1,5 +1,5 @@
 (function () {
-    angular.module('main')
+    angular.module('redeUi')
     .factory('CarouselItemFactory', CarouselItemFactory);
 
     CarouselItemFactory.$inject = ['$compile'];

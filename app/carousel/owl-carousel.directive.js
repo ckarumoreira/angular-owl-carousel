@@ -1,5 +1,5 @@
 (function () {
-    angular.module('main')
+    angular.module('redeUi')
     .directive('owlCarousel', OwlCarouselDirective);
 
     OwlCarouselDirective.$inject = ['CarouselItemFactory', '$window'];
@@ -73,6 +73,7 @@
             function SetItemSize() {
                 var intWindowWidth = $window.innerWidth,
                     intMarginPerItem = scope.config.margin,
+                    bolPullDrag = scope.config.pullDrag,
                     intStagePaddingTotalSize = intStagePadding * 2,
                     intMarginTotalSize = intItemsOnScreen * intMarginPerItem;
                 
@@ -84,9 +85,14 @@
                 divOwlStage.css('width', intStageWidth + 'px');
                 divOwlStage.children().css('width', intCarouselItemWidth + 'px');
                 
-                // Translate tops to a third of an item.  
-                intMaxTranslate = intItemWholeWidth / 3;
-                intMinTranslate = (intItemWholeWidth * (intMaxItemWindow - (1/3))) - intStageWidth;
+                // Translate tops to a third of an item.
+                if (bolPullDrag) {
+                    intMaxTranslate = intItemWholeWidth / 3;
+                    intMinTranslate = intItemWholeWidth * (intMaxItemWindow - (1/3)) - intStageWidth;
+                } else {
+                    intMaxTranslate = 0;
+                    intMinTranslate = (intItemWholeWidth * intMaxItemWindow) - intStageWidth;
+                }
 
                 // Best position to apply the final translate (won't cut any item)
                 arrBestTranslate = [];
@@ -124,10 +130,19 @@
                         'padding-right': intStagePadding + 'px'
                     });
 
-                divOwlStage.bind('mousedown', StartDrag);
-                divOwlStage.bind('mousemove', OnDrag);
-                divOwlStage.bind('mouseup', EndDrag);
-                divOwlStage.bind('mouseleave', EndDrag);
+                if (scope.config.mouseDrag === true) {
+                    divOwlStage.bind('mousedown', StartDrag);
+                    divOwlStage.bind('mousemove', OnDrag);
+                    divOwlStage.bind('mouseup', EndDrag);
+                    divOwlStage.bind('mouseleave', EndDrag);
+                }
+
+                if (scope.config.touchDrag === true) {
+                    divOwlStage.bind('tapstart', StartDrag);
+                    divOwlStage.bind('tapmove', OnDrag);
+                    divOwlStage.bind('tapend', EndDrag);
+                }
+
 
                 function StartDrag(event) {
                     event.stopPropagation();
@@ -141,9 +156,10 @@
                 function OnDrag(event) {
                     event.preventDefault();
                     if (bolDragging) {
-                        var strTransform = divOwlStage.css('transform');
-                        var strTranslateX = strTransform.split('(');
-                        var intDiff = intDragStart - event.screenX;
+                        var strTransform = divOwlStage.css('transform'),
+                            strTranslateX = strTransform.split('('),
+                            intDiff = intDragStart - (event.screenX || event.position.x);
+
                         intTranslateX = strTranslateX.length > 1 ? parseInt(strTranslateX[1]) : 0;
                         intDragStart = event.screenX;
 
@@ -165,6 +181,8 @@
                 }
 
                 function EndDrag() {
+                    var intDragEndSpeed = scope.config.dragEndSpeed || 0.25;
+
                     if (bolDragging) {
                         var intTargetPosition = Math.abs(Math.round(intTranslateX / intItemWholeWidth));
 
@@ -173,7 +191,7 @@
                         }
 
                         // Apply the best translate.
-                        MoveToItem(intTargetPosition);
+                        MoveToItem(intTargetPosition, intDragEndSpeed);
 
                         // Reset values.    
                         divContainer.removeClass('owl-grab');
@@ -188,6 +206,7 @@
                 var divNavPrev = angular.element('<div class="owl-prev"></div>'),
                     divNavNext = angular.element('<div class="owl-next"></div>'),
                     arrNavText = scope.config.navText,
+                    intSlideBy = scope.config.slideBy,
                     intNavSpeed = scope.config.navSpeed || 0.25;
 
                 if (scope.config.nav) {
@@ -210,8 +229,11 @@
                 }
                 
                 function MoveToNext (event) {
-                    if (intPosition < intItemCount - intItemsOnScreen) {
-                        intPosition++;
+                    var intMaxPosition = intItemCount - intItemsOnScreen;
+                    intPosition += intSlideBy;
+                    
+                    if (intPosition > intMaxPosition) {
+                        intPosition = intMaxPosition;
                     }
 
                     MoveToItem(intPosition, intNavSpeed);
@@ -219,8 +241,10 @@
                 }
 
                 function MoveToPrevious (event) {
-                    if (intPosition > 0) {
-                        intPosition--;
+                    intPosition -= intSlideBy;
+
+                    if (intPosition < 0) {
+                        intPosition = 0;
                     }
 
                     MoveToItem(intPosition, intNavSpeed);

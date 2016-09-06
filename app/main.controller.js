@@ -1,5 +1,5 @@
 (function () { 
-    angular.module('main')
+    angular.module('redeUi')
     .controller('MainCtrl', MainController);
 
     MainController.$inject = ['$scope'];
@@ -27,6 +27,7 @@
         $scope.carouselConfig = {
             items: 7,
             margin: 15,
+            slideBy: 2,
             dots: true,
             dotsEach: 7,
             nav: true,
@@ -34,6 +35,9 @@
             startPosition: 5,
             dotsSpeed: 0.5,
             navSpeed: 0.5,
+            dragEndSpeed: 1,
+            mouseDrag: true,
+            touchDrag: true,
             navText: ['proximo', 'anterior']
         };
     }

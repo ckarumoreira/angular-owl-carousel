@@ -18,20 +18,21 @@ A full port of current version of OwlCarousel2 (JQuery-less, using only jqLite f
 * startPosition
 * navSpeed
 * dotsSpeed
+* mouseDrag
+* touchDrag
+* pullDrag
+* dragEndSpeed
+* slideBy
 
 # Pending Configurations
 * loop
 * center
-* mouseDrag
-* touchDrag
-* pullDrag
 * freeDrag
 * merge
 * mergeFit
 * autoWidth
 * URLhashListener
 * navRewind
-* slideBy
 * dotData
 * lazyLoad
 * lazyContent
@@ -41,7 +42,6 @@ A full port of current version of OwlCarousel2 (JQuery-less, using only jqLite f
 * smartSpeed
 * fluidSpeed
 * autoplaySpeed
-* dragEndSpeed
 * callbacks
 * responsive
 * responsiveRefreshRate
