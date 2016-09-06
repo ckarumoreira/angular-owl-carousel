@@ -30,6 +30,10 @@ A full port of current version of OwlCarousel2 (JQuery-less, using only jqLite f
 * pullDrag
 * dragEndSpeed
 * slideBy
+* autoplay
+* autoplaySpeed
+* autoplayTimeout
+* autoplayHoverPause
 
 # Pending Configurations
 * loop
@@ -43,12 +47,8 @@ A full port of current version of OwlCarousel2 (JQuery-less, using only jqLite f
 * dotData
 * lazyLoad
 * lazyContent
-* autoplay
-* autoplayTimeout
-* autplayHoverPause
 * smartSpeed
 * fluidSpeed
-* autoplaySpeed
 * callbacks
 * responsive
 * responsiveRefreshRate

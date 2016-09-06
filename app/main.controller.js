@@ -38,6 +38,10 @@
             dragEndSpeed: 1,
             mouseDrag: true,
             touchDrag: true,
+            autoplay: true,
+            autoplaySpeed: 2,
+            autoplayTimeout: 5,
+            autoplayHoverPause: true,
             navText: ['proximo', 'anterior']
         };
     }

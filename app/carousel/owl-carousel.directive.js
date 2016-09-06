@@ -12,9 +12,15 @@
                 intStageWidth = undefined,
                 intMaxTranslate = undefined,
                 intMinTranslate = undefined,
+                objAutoplayInterval = undefined,
                 arrBestTranslate = [],
                 intPosition = 0,
+                bolAutoplayHoverPause = scope.config.autoplayHoverPause,
+                bolAutoplay = scope.config.autoplay,
+                intAutoplayTimeout = scope.config.autoplayTimeout,
+                intAutoplaySpeed = scope.config.autoplaySpeed,
                 divContainer = element,
+                intSlideBy = scope.config.slideBy,
                 intItemCount = scope.items.length,
                 intMaxItemWindow = scope.config.items || 3,
                 intStagePadding = scope.config.stagePadding || 0,
@@ -53,6 +59,21 @@
 
             intPosition = (scope.config.startPosition || 1) - 1;
             MoveToItem(intPosition);
+
+            if (bolAutoplay) {
+                objAutoplayInterval = setInterval(AutoplayMove, intAutoplayTimeout * 1000);
+            }
+
+            function AutoplayMove() {
+                var intMaxIndex = intItemCount - intItemsOnScreen;
+                intPosition += intSlideBy;
+
+                if (intPosition > intMaxIndex) {
+                    intPosition = 0;
+                }
+
+                MoveToItem(intPosition, intAutoplaySpeed);
+            }
 
             function MarkActive(intActiveStartIndex, intActiveEndIndex) {
                 var arrItems = divOwlStage.children(),
@@ -151,6 +172,10 @@
                     intDragStart = event.screenX;
                     divContainer.addClass('owl-grab');
                     divOwlStage.css('transition', '0s');
+
+                    if (bolAutoplay && bolAutoplayHoverPause) {
+                        $window.clearInterval(objAutoplayInterval);
+                    }
                 }
 
                 function OnDrag(event) {
@@ -178,10 +203,18 @@
                             intTranslateX = 0;
                         }
                     }
+
+                    if (bolAutoplay && bolAutoplayHoverPause) {
+                        $window.clearInterval(objAutoplayInterval);
+                    }
                 }
 
                 function EndDrag() {
                     var intDragEndSpeed = scope.config.dragEndSpeed || 0.25;
+
+                    if (bolAutoplay && bolAutoplayHoverPause) {
+                        objAutoplayInterval = setInterval(AutoplayMove, intAutoplayTimeout * 1000);
+                    }
 
                     if (bolDragging) {
                         var intTargetPosition = Math.abs(Math.round(intTranslateX / intItemWholeWidth));
@@ -206,7 +239,6 @@
                 var divNavPrev = angular.element('<div class="owl-prev"></div>'),
                     divNavNext = angular.element('<div class="owl-next"></div>'),
                     arrNavText = scope.config.navText,
-                    intSlideBy = scope.config.slideBy,
                     intNavSpeed = scope.config.navSpeed || 0.25;
 
                 if (scope.config.nav) {
