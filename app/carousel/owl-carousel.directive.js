@@ -32,17 +32,16 @@
                 intNavSpeed = undefined,
                 bolEnableTouchDrag = undefined,
                 bolEnableMouseDrag = undefined,
+                intStartPosition = undefined,
                 intPosition = 0,
                 arrBestTranslate = [],
                 divContainer = element;
             
+            // Start configuration.
             InitOwlConfig();
 
             // Create basic container elements.
-            divOwlStageOuter = angular.element('<div class="owl-stage-outer"></div>');
-            divOwlStage = angular.element('<div class="owl-stage"></div>');
-            divOwlNav = angular.element('<div class="owl-nav"></div>');
-            divOwlDots = angular.element('<div class="owl-dots"></div>');
+            InitElements();
 
             // Apply templates and everything related to item config.
             InitItems(scope.items);
@@ -68,7 +67,7 @@
                 scope.$digest();
             });
 
-            intPosition = (scope.config.startPosition || 1) - 1;
+            intPosition = intStartPosition - 1;
             MoveToItem(intPosition);
 
             if (bolAutoplay) {
@@ -83,11 +82,9 @@
                 intAutoplayTimeout = scope.config.autoplayTimeout;
                 intAutoplaySpeed = scope.config.autoplaySpeed;
                 intSlideBy = scope.config.slideBy;
-                intItemCount = scope.items.length;
                 intMaxItemWindow = scope.config.items || 3;
                 intStagePadding = scope.config.stagePadding || 0;
                 intDotsEach = scope.config.dotsEach || intMaxItemWindow;
-                intItemsOnScreen = intItemCount < intMaxItemWindow ? intItemCount : intMaxItemWindow;
                 intDotsSpeed = scope.config.dotsSpeed || 0.25;
                 intMarginPerItem = scope.config.margin;
                 bolPullDrag = scope.config.pullDrag;
@@ -96,6 +93,17 @@
                 intNavSpeed = scope.config.navSpeed || 0.25;
                 bolEnableTouchDrag = scope.config.touchDrag === true;
                 bolEnableMouseDrag = scope.config.mouseDrag === true;
+                intStartPosition = scope.config.startPosition || 1;
+                
+                intItemsOnScreen = intItemCount < intMaxItemWindow ? intItemCount : intMaxItemWindow;
+                intItemCount = scope.items.length;
+            }
+
+            function InitElements() {
+                divOwlStageOuter = angular.element('<div class="owl-stage-outer"></div>');
+                divOwlStage = angular.element('<div class="owl-stage"></div>');
+                divOwlNav = angular.element('<div class="owl-nav"></div>');
+                divOwlDots = angular.element('<div class="owl-dots"></div>');
             }
 
             function AutoplayMove() {
@@ -165,11 +173,11 @@
                     divCarouselItem = CarouselItemFactory.get(objItem.itemType, itemScope);
                     divOwlItem
                         .append(divCarouselItem)
-                        .css('margin-right', scope.config.margin);
+                        .css('margin-right', intMarginPerItem);
                     divOwlStage.append(divOwlItem);
                 }
 
-                MarkActive(0, scope.config.items);
+                MarkActive(0, intMaxItemWindow);
             }
 
             function InitStage() {
@@ -295,8 +303,8 @@
                 
                 function InitNavText() {
                     if (arrNavText && arrNavText instanceof Array && arrNavText.length == 2) {
-                        divNavNext.text(scope.config.navText[0]);
-                        divNavPrev.text(scope.config.navText[1]);
+                        divNavNext.text(arrNavText[0]);
+                        divNavPrev.text(arrNavText[1]);
                     } else {
                         divNavNext.text('next');
                         divNavPrev.text('prev');
