@@ -4,7 +4,7 @@
 
     OwlCarouselDirective.$inject = ['CarouselItemFactory', '$window'];
     function OwlCarouselDirective(CarouselItemFactory, $window) {
-        var divOwlStageOuter, divOwlStage, divOwlNav, divOwlDots;
+        var divOwlStageOuter, divOwlStage, divOwlNav, divOwlDots, divControls;
 
         function OwlCarouselLink (scope, element, attrs, controller) {
             var intCarouselItemWidth = undefined,
@@ -104,6 +104,7 @@
                 divOwlStage = angular.element('<div class="owl-stage"></div>');
                 divOwlNav = angular.element('<div class="owl-nav"></div>');
                 divOwlDots = angular.element('<div class="owl-dots"></div>');
+                divControls = angular.element('<div class="owl-controls"></div>');
             }
 
             function AutoplayMove() {
@@ -365,10 +366,13 @@
             function InitCarousel() {
                 divOwlStageOuter.append(divOwlStage);
 
-                divContainer
-                    .append(divOwlStageOuter)
+                divControls
                     .append(divOwlNav)
                     .append(divOwlDots);
+
+                divContainer
+                    .append(divOwlStageOuter)
+                    .append(divControls);
 
                 divContainer
                     .addClass('owl-loaded')
