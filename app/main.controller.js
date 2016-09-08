@@ -38,7 +38,7 @@
             dragEndSpeed: 1,
             mouseDrag: true,
             touchDrag: true,
-            autoplay: true,
+            autoplay: false,
             autoplaySpeed: 2,
             autoplayTimeout: 5,
             autoplayHoverPause: true,

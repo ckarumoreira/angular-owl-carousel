@@ -13,20 +13,31 @@
                 intMaxTranslate = undefined,
                 intMinTranslate = undefined,
                 objAutoplayInterval = undefined,
-                arrBestTranslate = [],
+                bolAutoplayHoverPause = undefined,
+                bolAutoplay = undefined,
+                intAutoplayTimeout = undefined,
+                intAutoplaySpeed = undefined,
+                intSlideBy = undefined,
+                intItemCount = undefined,
+                intMaxItemWindow = undefined,
+                intStagePadding = undefined,
+                intDotsEach = undefined,
+                intDotsSpeed = undefined,
+                intItemsOnScreen = undefined,
+                intMarginPerItem = undefined,
+                bolPullDrag = undefined,
+                bolEnableDots = undefined,
+                intDragEndSpeed = undefined,
+                arrNavText = undefined,
+                intNavSpeed = undefined,
+                bolEnableTouchDrag = undefined,
+                bolEnableMouseDrag = undefined,
                 intPosition = 0,
-                bolAutoplayHoverPause = scope.config.autoplayHoverPause,
-                bolAutoplay = scope.config.autoplay,
-                intAutoplayTimeout = scope.config.autoplayTimeout,
-                intAutoplaySpeed = scope.config.autoplaySpeed,
-                divContainer = element,
-                intSlideBy = scope.config.slideBy,
-                intItemCount = scope.items.length,
-                intMaxItemWindow = scope.config.items || 3,
-                intStagePadding = scope.config.stagePadding || 0,
-                intDotsEach = scope.config.dotsEach || intMaxItemWindow,
-                intItemsOnScreen = intItemCount < intMaxItemWindow ? intItemCount : intMaxItemWindow;
+                arrBestTranslate = [],
+                divContainer = element;
             
+            InitOwlConfig();
+
             // Create basic container elements.
             divOwlStageOuter = angular.element('<div class="owl-stage-outer"></div>');
             divOwlStage = angular.element('<div class="owl-stage"></div>');
@@ -64,6 +75,29 @@
                 objAutoplayInterval = setInterval(AutoplayMove, intAutoplayTimeout * 1000);
             }
 
+            function InitOwlConfig() {
+                bolEnableDots = scope.config.dots === true;
+                bolEnableNav = scope.config.nav === true;
+                bolAutoplayHoverPause = scope.config.autoplayHoverPause;
+                bolAutoplay = scope.config.autoplay;
+                intAutoplayTimeout = scope.config.autoplayTimeout;
+                intAutoplaySpeed = scope.config.autoplaySpeed;
+                intSlideBy = scope.config.slideBy;
+                intItemCount = scope.items.length;
+                intMaxItemWindow = scope.config.items || 3;
+                intStagePadding = scope.config.stagePadding || 0;
+                intDotsEach = scope.config.dotsEach || intMaxItemWindow;
+                intItemsOnScreen = intItemCount < intMaxItemWindow ? intItemCount : intMaxItemWindow;
+                intDotsSpeed = scope.config.dotsSpeed || 0.25;
+                intMarginPerItem = scope.config.margin;
+                bolPullDrag = scope.config.pullDrag;
+                intDragEndSpeed = scope.config.dragEndSpeed || 0.25;
+                arrNavText = scope.config.navText;
+                intNavSpeed = scope.config.navSpeed || 0.25;
+                bolEnableTouchDrag = scope.config.touchDrag === true;
+                bolEnableMouseDrag = scope.config.mouseDrag === true;
+            }
+
             function AutoplayMove() {
                 var intMaxIndex = intItemCount - intItemsOnScreen;
                 intPosition += intSlideBy;
@@ -93,8 +127,6 @@
 
             function SetItemSize() {
                 var intWindowWidth = $window.innerWidth,
-                    intMarginPerItem = scope.config.margin,
-                    bolPullDrag = scope.config.pullDrag,
                     intStagePaddingTotalSize = intStagePadding * 2,
                     intMarginTotalSize = intItemsOnScreen * intMarginPerItem;
                 
@@ -142,6 +174,7 @@
 
             function InitStage() {
                 var bolDragging = false,
+                    bolDragged = false,
                     intDragStart = 0,
                     intTranslateX = 0;
 
@@ -151,14 +184,14 @@
                         'padding-right': intStagePadding + 'px'
                     });
 
-                if (scope.config.mouseDrag === true) {
+                if (bolEnableMouseDrag) {
                     divOwlStage.bind('mousedown', StartDrag);
                     divOwlStage.bind('mousemove', OnDrag);
                     divOwlStage.bind('mouseup', EndDrag);
                     divOwlStage.bind('mouseleave', EndDrag);
                 }
 
-                if (scope.config.touchDrag === true) {
+                if (bolEnableTouchDrag) {
                     divOwlStage.bind('tapstart', StartDrag);
                     divOwlStage.bind('tapmove', OnDrag);
                     divOwlStage.bind('tapend', EndDrag);
@@ -170,7 +203,6 @@
                     event.preventDefault();
                     bolDragging = true;
                     intDragStart = event.screenX;
-                    divContainer.addClass('owl-grab');
                     divOwlStage.css('transition', '0s');
 
                     if (bolAutoplay && bolAutoplayHoverPause) {
@@ -179,11 +211,18 @@
                 }
 
                 function OnDrag(event) {
+                    var strTransform = divOwlStage.css('transform'),
+                        strTranslateX = strTransform.split('('),
+                        intDiff = intDragStart - (event.screenX || event.position.x || 0);
+                    
                     event.preventDefault();
+                    event.stopPropagation();
+
                     if (bolDragging) {
-                        var strTransform = divOwlStage.css('transform'),
-                            strTranslateX = strTransform.split('('),
-                            intDiff = intDragStart - (event.screenX || event.position.x);
+                        if (!bolDragged) {
+                            bolDragged = true;
+                            divContainer.addClass('owl-grab');
+                        }
 
                         intTranslateX = strTranslateX.length > 1 ? parseInt(strTranslateX[1]) : 0;
                         intDragStart = event.screenX;
@@ -210,8 +249,6 @@
                 }
 
                 function EndDrag() {
-                    var intDragEndSpeed = scope.config.dragEndSpeed || 0.25;
-
                     if (bolAutoplay && bolAutoplayHoverPause) {
                         objAutoplayInterval = setInterval(AutoplayMove, intAutoplayTimeout * 1000);
                     }
@@ -227,29 +264,25 @@
                         MoveToItem(intTargetPosition, intDragEndSpeed);
 
                         // Reset values.    
-                        divContainer.removeClass('owl-grab');
                         bolDragging = false;
                         intDragStart = 0;
                         intTranslateX = 0;
+                        if (bolDragged) {
+                            $window.setTimeout(function () {
+                                divContainer.removeClass('owl-grab');
+                                bolDragged = false;
+                            }, 10);
+                        }
                     }
                 }
             }
 
             function InitNav() {
                 var divNavPrev = angular.element('<div class="owl-prev"></div>'),
-                    divNavNext = angular.element('<div class="owl-next"></div>'),
-                    arrNavText = scope.config.navText,
-                    intNavSpeed = scope.config.navSpeed || 0.25;
+                    divNavNext = angular.element('<div class="owl-next"></div>');
 
-                if (scope.config.nav) {
-                    if (arrNavText && arrNavText instanceof Array && arrNavText.length == 2) {
-                        divNavNext.text(scope.config.navText[0]);
-                        divNavPrev.text(scope.config.navText[1]);
-                    } else {
-                        divNavNext.text('next');
-                        divNavPrev.text('prev');
-                    }
-                        
+                if (bolEnableNav) {
+                    InitNavText();
                     divNavPrev.bind('click', MoveToPrevious)
                     divNavNext.bind('click', MoveToNext);
 
@@ -260,6 +293,16 @@
                     divOwlNav.addClass('disabled');
                 }
                 
+                function InitNavText() {
+                    if (arrNavText && arrNavText instanceof Array && arrNavText.length == 2) {
+                        divNavNext.text(scope.config.navText[0]);
+                        divNavPrev.text(scope.config.navText[1]);
+                    } else {
+                        divNavNext.text('next');
+                        divNavPrev.text('prev');
+                    }
+                }
+
                 function MoveToNext (event) {
                     var intMaxPosition = intItemCount - intItemsOnScreen;
                     intPosition += intSlideBy;
@@ -288,25 +331,27 @@
                 var strDivDotElement = '<div class="owl-dot"><span></span></div>',
                     intDotCount = Math.ceil(intItemCount / intDotsEach),
                     intActiveDot = Math.ceil(intPosition / intDotsEach),
-                    intDotsSpeed = scope.config.dotsSpeed || 0.25,
                     divCurrentDot = undefined,
                     divActiveDot = undefined;
-
-                for (var intCounter = 0; intCounter < intDotCount; intCounter++) {
-                    divCurrentDot = angular.element(strDivDotElement);
-                    divCurrentDot.data('dot-position', intCounter);
-                    divCurrentDot.bind('click', function () {
-                        var divDot = angular.element(this),
-                            intDotPosition = divDot.data('dot-position');
+                
+                if (bolEnableDots) {
+                    for (var intCounter = 0; intCounter < intDotCount; intCounter++) {
+                        divCurrentDot = angular.element(strDivDotElement);
+                        divCurrentDot.data('dot-position', intCounter);
                         
-                        MoveToItem(intDotsEach * intDotPosition, intDotsSpeed);
-                    });
-                    
-                    divOwlDots.append(divCurrentDot);
-                }
+                        divCurrentDot.bind('click', function () {
+                            var divDot = angular.element(this),
+                                intDotPosition = divDot.data('dot-position');
+                            
+                            MoveToItem(intDotsEach * intDotPosition, intDotsSpeed);
+                        });
+                        
+                        divOwlDots.append(divCurrentDot);
+                    }
 
-                divActiveDot = angular.element(divOwlDots.children()[intActiveDot]);
-                divActiveDot.addClass('active');
+                    divActiveDot = angular.element(divOwlDots.children()[intActiveDot]);
+                    divActiveDot.addClass('active');
+                }
             }
 
             function InitCarousel() {

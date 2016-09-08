@@ -13,17 +13,14 @@
             },
             template: '<img ng-src="{{ thumbnail }}" display="title" />',
             link: function (scope, element, attrs, controller) {
-                var divItem = element,
-                    divOwlStage = divItem.parent(),
-                    divTitleHolder = angular.element($compile('<div class="title-holder" style="display: none;">{{ display }}</div>')(scope)),
-                    divOwlStageOuter = divOwlStage.parent(),
-                    divContainer = divOwlStageOuter.parent();
+                var divTemplate = element,
+                    divTitleHolder = angular.element($compile('<div class="title-holder" style="display: none;">{{ display }}</div>')(scope));
 
-                divItem.bind('click', Click);
-                divItem.bind('mousemove', StartHover);
-                divItem.bind('mouseleave', EndHover);
+                divTemplate.bind('click', Click);
+                divTemplate.bind('mousemove', StartHover);
+                divTemplate.bind('mouseleave', EndHover);
 
-                divItem.append(divTitleHolder);
+                divTemplate.append(divTitleHolder);
                 divTitleHolder.css({
                     'display': 'none',
                     'position': 'absolute',
@@ -41,7 +38,7 @@
                 });
 
                 function EndHover() {
-                    var intHeight = divItem.prop('offsetHeight');
+                    var intHeight = divTemplate.prop('offsetHeight');
                     divTitleHolder.css({
                         'display': 'block',
                         'transform': 'translateY(' + intHeight + 'px)'
@@ -56,8 +53,14 @@
                 }
 
                 function Click() {
+                    var divItem = divTemplate.parent(),
+                        divOwlStage = divItem.parent(),
+                        divOwlStageOuter = divOwlStage.parent(),
+                        divContainer = divOwlStageOuter.parent();
+
                     if (!divContainer.hasClass('owl-grab')) {
-                        $window.open(scope.url, '_blank');
+                        //$window.open(scope.url, '_blank');
+                        $window.alert(scope.display + ' cliked!');
                     }
                 }
             }
