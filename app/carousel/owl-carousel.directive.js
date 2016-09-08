@@ -7,31 +7,39 @@
         var divOwlStageOuter, divOwlStage, divOwlNav, divOwlDots, divControls;
 
         function OwlCarouselLink (scope, element, attrs, controller) {
-            var intCarouselItemWidth = undefined,
-                intItemWholeWidth = undefined,
-                intStageWidth = undefined,
-                intMaxTranslate = undefined,
-                intMinTranslate = undefined,
+                // size variables
+            var intOwlItemWidth = undefined,
+                intOwlItemWholeWidth = undefined,
+                intOwlStageWidth = undefined,
+                intStagePadding = undefined,
+                intMarginPerItem = undefined,
+                // autoplay variables
+                bolAutoplay = undefined,
                 objAutoplayInterval = undefined,
                 bolAutoplayHoverPause = undefined,
-                bolAutoplay = undefined,
                 intAutoplayTimeout = undefined,
                 intAutoplaySpeed = undefined,
+                // count variables
                 intSlideBy = undefined,
                 intItemCount = undefined,
                 intMaxItemWindow = undefined,
-                intStagePadding = undefined,
+                // dots variables
+                bolEnableDots = undefined,
                 intDotsEach = undefined,
                 intDotsSpeed = undefined,
-                intItemsOnScreen = undefined,
-                intMarginPerItem = undefined,
-                bolPullDrag = undefined,
-                bolEnableDots = undefined,
-                intDragEndSpeed = undefined,
-                arrNavText = undefined,
-                intNavSpeed = undefined,
+                // drag variables
                 bolEnableTouchDrag = undefined,
                 bolEnableMouseDrag = undefined,
+                bolPullDrag = undefined,
+                intMaxTranslate = undefined,
+                intMinTranslate = undefined,
+                intDragEndSpeed = undefined,
+                intItemsOnScreen = undefined,
+                // nav variables
+                bolEnableNav = undefined,
+                arrNavText = undefined,
+                intNavSpeed = undefined,
+                // position variables
                 intStartPosition = undefined,
                 intPosition = 0,
                 arrBestTranslate = [],
@@ -58,20 +66,57 @@
             // Enable navigation and indication by dots.
             InitDots();
             
-            // Set initial size of items.
-            SetItemSize();
 
-            // Resize elements to fit the viewport.
-            angular.element($window).bind('resize', function(){
-                SetItemSize();
-                scope.$digest();
-            });
-
-            intPosition = intStartPosition - 1;
-            MoveToItem(intPosition);
+            InitPosition();
 
             if (bolAutoplay) {
                 objAutoplayInterval = setInterval(AutoplayMove, intAutoplayTimeout * 1000);
+            }
+
+            function InitItemSize() {
+                // Set initial size of items.
+                SetItemSize();
+
+                // Resize elements to fit the viewport.
+                angular.element($window).bind('resize', function(){
+                    SetItemSize();
+                    scope.$digest();
+                });
+
+                // Use viewport size to resize its elements.
+                function SetItemSize() {
+                    var intWindowWidth = $window.innerWidth,
+                        intStagePaddingTotalSize = intStagePadding * 2,
+                        intMarginTotalSize = intItemsOnScreen * intMarginPerItem;
+                    
+                    intOwlItemWidth = parseInt((intWindowWidth - intMarginTotalSize - intStagePaddingTotalSize) / intItemsOnScreen);
+                    intOwlItemWholeWidth = intOwlItemWidth + intMarginPerItem;
+                    intOwlStageWidth = intOwlItemWholeWidth * intItemCount;
+                    
+                    // Apply width on Stage and Children.
+                    divOwlStage.css('width', intOwlStageWidth + 'px');
+                    divOwlStage.children().css('width', intOwlItemWidth + 'px');
+                    
+                    // Translate tops to a third of an item.
+                    if (bolPullDrag) {
+                        intMaxTranslate = intOwlItemWholeWidth / 3;
+                        intMinTranslate = intOwlItemWholeWidth * (intMaxItemWindow - (1/3)) - intOwlStageWidth;
+                    } else {
+                        intMaxTranslate = 0;
+                        intMinTranslate = (intOwlItemWholeWidth * intMaxItemWindow) - intOwlStageWidth;
+                    }
+
+                    // Best position to apply the final translate (won't cut any item)
+                    arrBestTranslate = [];
+                    for (var intCounter = 0; intCounter < intItemCount; intCounter++) {
+                        arrBestTranslate.push(intCounter * intOwlItemWholeWidth * -1);
+                    }
+                }
+            }
+
+            function InitPosition() {
+                intPosition = intStartPosition - 1;
+                MoveToItem(intPosition);
             }
 
             function InitOwlConfig() {
@@ -105,62 +150,6 @@
                 divOwlNav = angular.element('<div class="owl-nav"></div>');
                 divOwlDots = angular.element('<div class="owl-dots"></div>');
                 divControls = angular.element('<div class="owl-controls"></div>');
-            }
-
-            function AutoplayMove() {
-                var intMaxIndex = intItemCount - intItemsOnScreen;
-                intPosition += intSlideBy;
-
-                if (intPosition > intMaxIndex) {
-                    intPosition = 0;
-                }
-
-                MoveToItem(intPosition, intAutoplaySpeed);
-            }
-
-            function MarkActive(intActiveStartIndex, intActiveEndIndex) {
-                var arrItems = divOwlStage.children(),
-                    divOwlCurrentItem = undefined;
-
-                for (var intCount = 0, intLength = arrItems.length; intCount < intLength; intCount++) {
-                    divOwlCurrentItem = angular.element(arrItems[intCount]);
-                    if (intCount >= intActiveStartIndex && intCount < intActiveEndIndex) {
-                        divOwlCurrentItem.addClass('active');
-                    } else {
-                        divOwlCurrentItem.removeClass('active');
-                    }
-                }
-
-                intPosition = intActiveStartIndex;
-            }
-
-            function SetItemSize() {
-                var intWindowWidth = $window.innerWidth,
-                    intStagePaddingTotalSize = intStagePadding * 2,
-                    intMarginTotalSize = intItemsOnScreen * intMarginPerItem;
-                
-                intCarouselItemWidth = parseInt((intWindowWidth - intMarginTotalSize - intStagePaddingTotalSize) / intItemsOnScreen);
-                intItemWholeWidth = intCarouselItemWidth + intMarginPerItem;
-                intStageWidth = intItemWholeWidth * intItemCount;
-                
-                // Apply width on Stage and Children.
-                divOwlStage.css('width', intStageWidth + 'px');
-                divOwlStage.children().css('width', intCarouselItemWidth + 'px');
-                
-                // Translate tops to a third of an item.
-                if (bolPullDrag) {
-                    intMaxTranslate = intItemWholeWidth / 3;
-                    intMinTranslate = intItemWholeWidth * (intMaxItemWindow - (1/3)) - intStageWidth;
-                } else {
-                    intMaxTranslate = 0;
-                    intMinTranslate = (intItemWholeWidth * intMaxItemWindow) - intStageWidth;
-                }
-
-                // Best position to apply the final translate (won't cut any item)
-                arrBestTranslate = [];
-                for (var intCounter = 0; intCounter < intItemCount; intCounter++) {
-                    arrBestTranslate.push(intCounter * intItemWholeWidth * -1);
-                }
             }
 
             function InitItems(arrItems) {
@@ -263,7 +252,7 @@
                     }
 
                     if (bolDragging) {
-                        var intTargetPosition = Math.abs(Math.round(intTranslateX / intItemWholeWidth));
+                        var intTargetPosition = Math.abs(Math.round(intTranslateX / intOwlItemWholeWidth));
 
                         if (intTargetPosition > intItemCount - intMaxItemWindow) {
                             intTargetPosition = intItemCount - intMaxItemWindow;
@@ -377,6 +366,33 @@
                 divContainer
                     .addClass('owl-loaded')
                     .addClass('owl-theme');
+            }
+
+            function AutoplayMove() {
+                var intMaxIndex = intItemCount - intItemsOnScreen;
+                intPosition += intSlideBy;
+
+                if (intPosition > intMaxIndex) {
+                    intPosition = 0;
+                }
+
+                MoveToItem(intPosition, intAutoplaySpeed);
+            }
+
+            function MarkActive(intActiveStartIndex, intActiveEndIndex) {
+                var arrItems = divOwlStage.children(),
+                    divOwlCurrentItem = undefined;
+
+                for (var intCount = 0, intLength = arrItems.length; intCount < intLength; intCount++) {
+                    divOwlCurrentItem = angular.element(arrItems[intCount]);
+                    if (intCount >= intActiveStartIndex && intCount < intActiveEndIndex) {
+                        divOwlCurrentItem.addClass('active');
+                    } else {
+                        divOwlCurrentItem.removeClass('active');
+                    }
+                }
+
+                intPosition = intActiveStartIndex;
             }
 
             function DragToPosition(intPosition, strTransition) {
