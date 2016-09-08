@@ -66,6 +66,7 @@
             // Enable navigation and indication by dots.
             InitDots();
             
+            InitItemSize();
 
             InitPosition();
 
