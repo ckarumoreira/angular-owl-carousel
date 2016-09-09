@@ -59,8 +59,7 @@
                         divContainer = divOwlStageOuter.parent();
 
                     if (!divContainer.hasClass('owl-grab')) {
-                        //$window.open(scope.url, '_blank');
-                        $window.alert(scope.display + ' cliked!');
+                        $window.open(scope.url, '_blank');
                     }
                 }
             }

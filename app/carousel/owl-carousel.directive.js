@@ -66,13 +66,14 @@
             // Enable navigation and indication by dots.
             InitDots();
             
+            // Apply item size control. 
             InitItemSize();
 
+            // Apply start position. 
             InitPosition();
 
-            if (bolAutoplay) {
-                objAutoplayInterval = setInterval(AutoplayMove, intAutoplayTimeout * 1000);
-            }
+            // Apply autoplay configuration.
+            InitAutoplay();
 
             function InitItemSize() {
                 // Set initial size of items.
@@ -248,8 +249,8 @@
                 }
 
                 function EndDrag() {
-                    if (bolAutoplay && bolAutoplayHoverPause) {
-                        objAutoplayInterval = setInterval(AutoplayMove, intAutoplayTimeout * 1000);
+                    if (bolAutoplayHoverPause) {
+                        InitAutoplay();
                     }
 
                     if (bolDragging) {
@@ -369,15 +370,21 @@
                     .addClass('owl-theme');
             }
 
-            function AutoplayMove() {
-                var intMaxIndex = intItemCount - intItemsOnScreen;
-                intPosition += intSlideBy;
-
-                if (intPosition > intMaxIndex) {
-                    intPosition = 0;
+            function InitAutoplay() {
+                if (bolAutoplay) {
+                    objAutoplayInterval = setInterval(AutoplayMove, intAutoplayTimeout * 1000);
                 }
 
-                MoveToItem(intPosition, intAutoplaySpeed);
+                function AutoplayMove() {
+                    var intMaxIndex = intItemCount - intItemsOnScreen;
+                    intPosition += intSlideBy;
+
+                    if (intPosition > intMaxIndex) {
+                        intPosition = 0;
+                    }
+
+                    MoveToItem(intPosition, intAutoplaySpeed);
+                }
             }
 
             function MarkActive(intActiveStartIndex, intActiveEndIndex) {
@@ -394,11 +401,6 @@
                 }
 
                 intPosition = intActiveStartIndex;
-            }
-
-            function DragToPosition(intPosition, strTransition) {
-                divOwlStage.css('transition', strTransition || '0s');
-                divOwlStage.css('transform', 'translateX(' + intPosition + 'px)');
             }
 
             function MoveToItem(intTargetPosition, intSpeed) {
@@ -420,6 +422,11 @@
                     } else {
                         divCurrentDot.removeClass('active');
                     }
+                }
+
+                function DragToPosition(intPosition, strTransition) {
+                    divOwlStage.css('transition', strTransition || '0s');
+                    divOwlStage.css('transform', 'translateX(' + intPosition + 'px)');
                 }
             }
         }
