@@ -14,7 +14,7 @@
             template: '<img ng-src="{{ thumbnail }}" display="title" />',
             link: function (scope, element, attrs, controller) {
                 var divTemplate = element,
-                    divTitleHolder = angular.element($compile('<div class="title-holder" style="display: none;">{{ display }}</div>')(scope));
+                    divTitleHolder = angular.element($compile('<div class="title-holder" style="display: none;" ng-bind="display"></div>')(scope));
 
                 divTemplate.bind('click', Click);
                 divTemplate.bind('mousemove', StartHover);

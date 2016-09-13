@@ -44,7 +44,7 @@
                 intPosition = 0,
                 arrBestTranslate = [],
                 divContainer = element;
-            
+
             // Start configuration.
             InitOwlConfig();
 
@@ -197,17 +197,12 @@
                     divOwlStage.bind('tapend', EndDrag);
                 }
 
-
                 function StartDrag(event) {
                     event.stopPropagation();
                     event.preventDefault();
                     bolDragging = true;
                     intDragStart = event.screenX;
                     divOwlStage.css('transition', '0s');
-
-                    if (bolAutoplay && bolAutoplayHoverPause) {
-                        $window.clearInterval(objAutoplayInterval);
-                    }
                 }
 
                 function OnDrag(event) {
@@ -331,26 +326,29 @@
                 var strDivDotElement = '<div class="owl-dot"><span></span></div>',
                     intDotCount = Math.ceil(intItemCount / intDotsEach),
                     intActiveDot = Math.ceil(intPosition / intDotsEach),
-                    divCurrentDot = undefined,
-                    divActiveDot = undefined;
+                    divCurrentDot = undefined;
                 
                 if (bolEnableDots) {
                     for (var intCounter = 0; intCounter < intDotCount; intCounter++) {
                         divCurrentDot = angular.element(strDivDotElement);
                         divCurrentDot.data('dot-position', intCounter);
-                        
-                        divCurrentDot.bind('click', function () {
-                            var divDot = angular.element(this),
-                                intDotPosition = divDot.data('dot-position');
-                            
-                            MoveToItem(intDotsEach * intDotPosition, intDotsSpeed);
-                        });
-                        
+                        divCurrentDot.bind('click', OnDotClick);
                         divOwlDots.append(divCurrentDot);
                     }
 
-                    divActiveDot = angular.element(divOwlDots.children()[intActiveDot]);
-                    divActiveDot.addClass('active');
+                    SetDotActive(intActiveDot);
+
+                    function OnDotClick() {
+                        var divDot = angular.element(this),
+                            intDotPosition = divDot.data('dot-position');    
+                        MoveToItem(intDotsEach * intDotPosition, intDotsSpeed);
+                    }
+
+                    function SetDotActive(intIndex) {
+                        var divActiveDot = angular.element(divOwlDots.children()[intIndex]);
+                        divActiveDot.addClass('active');
+                        intActiveDot = intIndex;
+                    }
                 }
             }
 
