@@ -13,6 +13,7 @@
                 intOwlStageWidth = undefined,
                 intStagePadding = undefined,
                 intMarginPerItem = undefined,
+                objResponsiveConfig = undefined,
                 // autoplay variables
                 bolAutoplay = undefined,
                 objAutoplayInterval = undefined,
@@ -89,7 +90,21 @@
                 function SetItemSize() {
                     var intWindowWidth = $window.innerWidth,
                         intStagePaddingTotalSize = intStagePadding * 2,
-                        intMarginTotalSize = intItemsOnScreen * intMarginPerItem;
+                        intMarginTotalSize = undefined;
+
+                    if (objResponsiveConfig) {
+                        for (var strSize in objResponsiveConfig) {
+                            debugger;
+                            if (objResponsiveConfig.hasOwnProperty(strSize)) {
+                                var intSize = parseInt(strSize);
+                                if (intWindowWidth >= intSize) {
+                                    intItemsOnScreen = objResponsiveConfig[strSize].items;
+                                }
+                            }
+                        }
+                    }
+
+                    intMarginTotalSize = intItemsOnScreen * intMarginPerItem;
                     
                     try {
                         intOwlItemWidth = parseInt((intWindowWidth - intMarginTotalSize - intStagePaddingTotalSize) / intItemsOnScreen);
@@ -159,6 +174,7 @@
                     bolEnableTouchDrag = scope.config.touchDrag === true;
                     bolEnableMouseDrag = scope.config.mouseDrag === true;
                     intStartPosition = scope.config.startPosition || 1;
+                    objResponsiveConfig = scope.config.responsive;
                     
                     intItemsOnScreen = intItemCount < intMaxItemWindow ? intItemCount : intMaxItemWindow;
                     intItemCount = scope.items.length;   
@@ -177,20 +193,29 @@
 
             function InitItems(arrItems) {
                 for (var intCounter = 0, intSize = arrItems.length; intCounter < intSize; intCounter++) {
-                    var objItem = arrItems[intCounter],
-                        divOwlItem = angular.element('<div class="owl-item"></div>')
-                        divCarouselItem = undefined,
-                        itemScope = scope.$new(true);
-
-                    itemScope.item = objItem;
-                    divCarouselItem = CarouselItemFactory.get(objItem.itemType, itemScope);
-                    divOwlItem
-                        .append(divCarouselItem)
-                        .css('margin-right', intMarginPerItem);
-                    divOwlStage.append(divOwlItem);
+                    CreateItem(arrItems[intCounter], scope.$new(true));
                 }
 
                 MarkActive(0, intMaxItemWindow);
+
+                function CreateItem(objItem, itemScope) {
+                    var divOwlItem = angular.element('<div class="owl-item"></div>'),
+                        divCarouselItem = undefined;
+
+                    // Init scope with item data.
+                    itemScope.item = objItem;
+                    
+                    // Generate carousel item.
+                    divCarouselItem = CarouselItemFactory.get(objItem.itemType, itemScope);
+
+                    // Append to templated item to owl-item.
+                    divOwlItem
+                        .append(divCarouselItem)
+                        .css('margin-right', intMarginPerItem);
+
+                    // Append owl-item to stage.
+                    divOwlStage.append(divOwlItem);
+                }
             }
 
             function InitStage() {
@@ -353,7 +378,7 @@
                 } else {
                     divOwlNav.addClass('disabled');
                 }
-                
+
                 function InitNavText() {
                     if (arrNavText && arrNavText instanceof Array && arrNavText.length == 2) {
                         divNavNext.text(arrNavText[0]);
@@ -436,7 +461,7 @@
 
             function InitAutoplay() {
                 if (bolAutoplay) {
-                    objAutoplayInterval = setInterval(AutoplayMove, intAutoplayTimeout * 1000);
+                    objAutoplayInterval = setInterval(AutoplayMove, intAutoplayTimeout);
                 }
 
                 function AutoplayMove() {

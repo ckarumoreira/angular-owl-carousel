@@ -10,40 +10,57 @@
             new Video('https://www.youtube.com/watch?v=3', 'carousel/img/300x150.png', '3'),
             new Video('https://www.youtube.com/watch?v=4', 'carousel/img/300x150.png', '4'),
             new Video('https://www.youtube.com/watch?v=5', 'carousel/img/300x150.png', '5'),
-
             new Video('https://www.youtube.com/watch?v=6', 'carousel/img/300x150.png', '6'),
             new Video('https://www.youtube.com/watch?v=7', 'carousel/img/300x150.png', '7'),
+
             new Video('https://www.youtube.com/watch?v=8', 'carousel/img/300x150.png', '8'),
             new Video('https://www.youtube.com/watch?v=9', 'carousel/img/300x150.png', '9'),
             new Video('https://www.youtube.com/watch?v=10', 'carousel/img/300x150.png', '10'),
-            
             new Video('https://www.youtube.com/watch?v=11', 'carousel/img/300x150.png', '11'),
             new Video('https://www.youtube.com/watch?v=12', 'carousel/img/300x150.png', '12'),
             new Video('https://www.youtube.com/watch?v=13', 'carousel/img/300x150.png', '13'),
             new Video('https://www.youtube.com/watch?v=14', 'carousel/img/300x150.png', '14'),
-            new Video('https://www.youtube.com/watch?v=15', 'carousel/img/300x150.png', '15')
+
+            new Video('https://www.youtube.com/watch?v=15', 'carousel/img/300x150.png', '15'),
+            new Video('https://www.youtube.com/watch?v=15', 'carousel/img/300x150.png', '16'),
+            new Video('https://www.youtube.com/watch?v=15', 'carousel/img/300x150.png', '17'),
+            new Video('https://www.youtube.com/watch?v=15', 'carousel/img/300x150.png', '18'),
+            new Video('https://www.youtube.com/watch?v=15', 'carousel/img/300x150.png', '19'),
+            new Video('https://www.youtube.com/watch?v=15', 'carousel/img/300x150.png', '20'),
+            new Video('https://www.youtube.com/watch?v=15', 'carousel/img/300x150.png', '21')
         ];  
 
         $scope.carouselConfig = {
             items: 7,
             margin: 15,
-            slideBy: 2,
+            slideBy: 7,
             dots: true,
             dotsEach: 7,
             nav: true,
             stagePadding: 0,
-            startPosition: 5,
+            startPosition: 1,
             dotsSpeed: 500,
             navSpeed: 500,
-            dragEndSpeed: 1,
+            dragEndSpeed: 1000,
             mouseDrag: true,
             touchDrag: true,
             autoplay: false,
             pullDrag: true,
-            autoplaySpeed: 2,
-            autoplayTimeout: 5,
+            autoplaySpeed: 2000,
+            autoplayTimeout: 5000,
             autoplayHoverPause: true,
-            navText: ['proximo', 'anterior']
+            responsive: {
+                0: {
+                    items: 3
+                },
+                600: {
+                    items: 5
+                },
+                900: {
+                    items: 7
+                }
+            },
+            navText: ['proxima', 'anterior']
         };
     }
 
