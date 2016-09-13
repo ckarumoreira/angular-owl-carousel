@@ -91,28 +91,45 @@
                         intStagePaddingTotalSize = intStagePadding * 2,
                         intMarginTotalSize = intItemsOnScreen * intMarginPerItem;
                     
-                    intOwlItemWidth = parseInt((intWindowWidth - intMarginTotalSize - intStagePaddingTotalSize) / intItemsOnScreen);
-                    intOwlItemWholeWidth = intOwlItemWidth + intMarginPerItem;
-                    intOwlStageWidth = intOwlItemWholeWidth * intItemCount;
+                    try {
+                        intOwlItemWidth = parseInt((intWindowWidth - intMarginTotalSize - intStagePaddingTotalSize) / intItemsOnScreen);
+                        intOwlItemWholeWidth = intOwlItemWidth + intMarginPerItem;
+                        intOwlStageWidth = intOwlItemWholeWidth * intItemCount;
+                    } catch (err) {
+                        console.log('ERR: it was not possible to calculate widths', err);
+                    }
                     
                     // Apply width on Stage and Children.
-                    divOwlStage.css('width', intOwlStageWidth + 'px');
-                    divOwlStage.children().css('width', intOwlItemWidth + 'px');
+                    try {
+                        divOwlStage.css('width', intOwlStageWidth + 'px');
+                        divOwlStage.children().css('width', intOwlItemWidth + 'px');
+                    } catch (err) {
+                        console.log('ERR: it was not possible to apply the widths', err);
+                    }
                     
                     // Translate tops to a third of an item.
-                    if (bolPullDrag) {
-                        intMaxTranslate = intOwlItemWholeWidth / 3;
-                        intMinTranslate = intOwlItemWholeWidth * (intMaxItemWindow - (1/3)) - intOwlStageWidth;
-                    } else {
-                        intMaxTranslate = 0;
-                        intMinTranslate = (intOwlItemWholeWidth * intMaxItemWindow) - intOwlStageWidth;
+                    try {
+                        if (bolPullDrag) {
+                            intMaxTranslate = intOwlItemWholeWidth / 3;
+                            intMinTranslate = intOwlItemWholeWidth * (intMaxItemWindow - (1/3)) - intOwlStageWidth;
+                        } else {
+                            intMaxTranslate = 0;
+                            intMinTranslate = (intOwlItemWholeWidth * intMaxItemWindow) - intOwlStageWidth;
+                        }   
+                    } catch (err) {
+                        console.log('ERR: it was not possible to calculate max translation', err);
                     }
 
                     // Best position to apply the final translate (won't cut any item)
-                    arrBestTranslate = [];
-                    for (var intCounter = 0; intCounter < intItemCount; intCounter++) {
-                        arrBestTranslate.push(intCounter * intOwlItemWholeWidth * -1);
+                    try {
+                        arrBestTranslate = [];
+                        for (var intCounter = 0; intCounter < intItemCount; intCounter++) {
+                            arrBestTranslate.push(intCounter * intOwlItemWholeWidth * -1);
+                        }
+                    } catch (err) {
+                        console.log('ERR: it was not possible to calculate best translation for items', err);
                     }
+                        
                 }
             }
 
@@ -132,12 +149,12 @@
                 intMaxItemWindow = scope.config.items || 3;
                 intStagePadding = scope.config.stagePadding || 0;
                 intDotsEach = scope.config.dotsEach || intMaxItemWindow;
-                intDotsSpeed = scope.config.dotsSpeed || 0.25;
+                intDotsSpeed = scope.config.dotsSpeed || 250;
                 intMarginPerItem = scope.config.margin;
                 bolPullDrag = scope.config.pullDrag;
-                intDragEndSpeed = scope.config.dragEndSpeed || 0.25;
+                intDragEndSpeed = scope.config.dragEndSpeed || 250;
                 arrNavText = scope.config.navText;
-                intNavSpeed = scope.config.navSpeed || 0.25;
+                intNavSpeed = scope.config.navSpeed || 250;
                 bolEnableTouchDrag = scope.config.touchDrag === true;
                 bolEnableMouseDrag = scope.config.mouseDrag === true;
                 intStartPosition = scope.config.startPosition || 1;
@@ -178,12 +195,14 @@
                     intDragStart = 0,
                     intTranslateX = 0;
 
+                // Apply left-right-padding.
                 divOwlStageOuter
                     .css({
                         'padding-left':  intStagePadding + 'px',
                         'padding-right': intStagePadding + 'px'
                     });
 
+                // Init mouse events.
                 if (bolEnableMouseDrag) {
                     divOwlStage.bind('mousedown', StartDrag);
                     divOwlStage.bind('mousemove', OnDrag);
@@ -191,6 +210,7 @@
                     divOwlStage.bind('mouseleave', EndDrag);
                 }
 
+                // Init touch events.
                 if (bolEnableTouchDrag) {
                     divOwlStage.bind('tapstart', StartDrag);
                     divOwlStage.bind('tapmove', OnDrag);
@@ -198,76 +218,118 @@
                 }
 
                 function StartDrag(event) {
-                    event.stopPropagation();
-                    event.preventDefault();
-                    bolDragging = true;
-                    intDragStart = event.screenX;
-                    divOwlStage.css('transition', '0s');
+                    // Event prevention and stop propagation
+                    try {
+                        event.stopPropagation();
+                        event.preventDefault();
+                    } catch (err) {
+                        console.log('ERR: drag has no mousedown event', err);
+                    }
+
+                    // Actual Drag Start event
+                    try {
+                        bolDragging = true;
+                        intDragStart = event.screenX;
+                        divOwlStage.css('transition', '0s');
+                    } catch (err) {
+                        console.log('ERR: drag event start', err);
+                    }
                 }
 
                 function OnDrag(event) {
-                    var strTransform = divOwlStage.css('transform'),
-                        strTranslateX = strTransform.split('('),
-                        intDiff = intDragStart - (event.screenX || event.position.x || 0);
-                    
-                    event.preventDefault();
-                    event.stopPropagation();
+                    var strTransform = undefined,
+                        strTranslateX = undefined,
+                        intDiff = undefined;
 
-                    if (bolDragging) {
-                        if (!bolDragged) {
-                            bolDragged = true;
-                            divContainer.addClass('owl-grab');
-                        }
-
-                        intTranslateX = strTranslateX.length > 1 ? parseInt(strTranslateX[1]) : 0;
-                        intDragStart = event.screenX;
-
-                        // Apply dragging restrictions.
-                        if (intTranslateX > intMaxTranslate) {
-                            intTranslateX = intMaxTranslate;
-                        } else if (intTranslateX < intMinTranslate) {
-                            intTranslateX = intMinTranslate;
-                        } else {
-                            intTranslateX -= intDiff;
-                        }
-
-                        // Apply drag.
-                        divOwlStage.css('transform', 'translateX(' + intTranslateX + 'px)');
-                        if (intTranslateX > 0) {
-                            intTranslateX = 0;
-                        }
+                    // Event prevention and stop propagation
+                    try {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    } catch (err) {
+                        console.log('ERR: drag has no mousemove event', err);
                     }
 
-                    if (bolAutoplay && bolAutoplayHoverPause) {
-                        $window.clearInterval(objAutoplayInterval);
+                    // Actual On Drag
+                    try {
+                        if (bolDragging) {
+                            strTransform = divOwlStage.css('transform');
+                            strTranslateX = strTransform.split('(');
+                            intDiff = intDragStart - (event.screenX || event.position.x || 0);
+
+                            if (!bolDragged) {
+                                bolDragged = true;
+                                divContainer.addClass('owl-grab');
+                            }
+
+                            intTranslateX = strTranslateX.length > 1 ? parseInt(strTranslateX[1]) : 0;
+                            intDragStart = event.screenX;
+
+                            // Apply dragging restrictions.
+                            if (intTranslateX > intMaxTranslate) {
+                                intTranslateX = intMaxTranslate;
+                            } else if (intTranslateX < intMinTranslate) {
+                                intTranslateX = intMinTranslate;
+                            } else {
+                                intTranslateX -= intDiff;
+                            }
+
+                            // Apply drag.
+                            divOwlStage.css('transform', 'translateX(' + intTranslateX + 'px)');
+                            if (intTranslateX > 0) {
+                                intTranslateX = 0;
+                            }
+                        }                        
+                    } catch (err) {
+                        console.log('ERR: error during on drag event', err);
+                    }
+
+                    // Autoplay pause.
+                    try {
+                        if (bolAutoplay && bolAutoplayHoverPause) {
+                            $window.clearInterval(objAutoplayInterval);
+                        }    
+                    } catch (err) {
+                        console.log('ERR: it was not possible to stop autoplay', err);
                     }
                 }
 
                 function EndDrag() {
-                    if (bolAutoplayHoverPause) {
-                        InitAutoplay();
+                    var intTargetPosition = undefined;
+
+                    // Autoplay restart
+                    try {
+                        if (bolAutoplayHoverPause) {
+                            InitAutoplay();
+                        }   
+                    } catch (err) {
+                        console.log('ERR: it was not possible to init autoplay again', err);
                     }
+                    
+                    // Actual Drag End
+                    try {
+                        if (bolDragging) {
+                            intTargetPosition = Math.abs(Math.round(intTranslateX / intOwlItemWholeWidth));
 
-                    if (bolDragging) {
-                        var intTargetPosition = Math.abs(Math.round(intTranslateX / intOwlItemWholeWidth));
+                            if (intTargetPosition > intItemCount - intMaxItemWindow) {
+                                intTargetPosition = intItemCount - intMaxItemWindow;
+                            }
 
-                        if (intTargetPosition > intItemCount - intMaxItemWindow) {
-                            intTargetPosition = intItemCount - intMaxItemWindow;
+                            // Apply the best translate.
+                            MoveToItem(intTargetPosition, intDragEndSpeed);
+
+                            // Reset values.    
+                            bolDragging = false;
+                            intDragStart = 0;
+                            intTranslateX = 0;
+                            if (bolDragged) {
+                                $window.setTimeout(function () {
+                                    divContainer.removeClass('owl-grab');
+                                    bolDragged = false;
+                                }, 10);
+                            }
                         }
-
-                        // Apply the best translate.
-                        MoveToItem(intTargetPosition, intDragEndSpeed);
-
-                        // Reset values.    
-                        bolDragging = false;
-                        intDragStart = 0;
-                        intTranslateX = 0;
-                        if (bolDragged) {
-                            $window.setTimeout(function () {
-                                divContainer.removeClass('owl-grab');
-                                bolDragged = false;
-                            }, 10);
-                        }
+                    } catch (err) {
+                        console.log('ERR: on drag end event', err);
                     }
                 }
             }
@@ -409,7 +471,7 @@
 
                 MarkActive(intTargetPosition, intTargetPosition + intItemsOnScreen);
 
-                DragToPosition(intTranslation, (intSpeed || 0.25) + 's');
+                DragToPosition(intTranslation, (intSpeed || 250) + 'ms');
 
                 intPosition = intTargetPosition;
                 
