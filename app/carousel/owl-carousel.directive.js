@@ -139,28 +139,32 @@
             }
 
             function InitOwlConfig() {
-                bolEnableDots = scope.config.dots === true;
-                bolEnableNav = scope.config.nav === true;
-                bolAutoplayHoverPause = scope.config.autoplayHoverPause;
-                bolAutoplay = scope.config.autoplay;
-                intAutoplayTimeout = scope.config.autoplayTimeout;
-                intAutoplaySpeed = scope.config.autoplaySpeed;
-                intSlideBy = scope.config.slideBy;
-                intMaxItemWindow = scope.config.items || 3;
-                intStagePadding = scope.config.stagePadding || 0;
-                intDotsEach = scope.config.dotsEach || intMaxItemWindow;
-                intDotsSpeed = scope.config.dotsSpeed || 250;
-                intMarginPerItem = scope.config.margin;
-                bolPullDrag = scope.config.pullDrag;
-                intDragEndSpeed = scope.config.dragEndSpeed || 250;
-                arrNavText = scope.config.navText;
-                intNavSpeed = scope.config.navSpeed || 250;
-                bolEnableTouchDrag = scope.config.touchDrag === true;
-                bolEnableMouseDrag = scope.config.mouseDrag === true;
-                intStartPosition = scope.config.startPosition || 1;
-                
-                intItemsOnScreen = intItemCount < intMaxItemWindow ? intItemCount : intMaxItemWindow;
-                intItemCount = scope.items.length;
+                try {
+                    bolEnableDots = scope.config.dots === true;
+                    bolEnableNav = scope.config.nav === true;
+                    bolAutoplayHoverPause = scope.config.autoplayHoverPause;
+                    bolAutoplay = scope.config.autoplay;
+                    intAutoplayTimeout = scope.config.autoplayTimeout;
+                    intAutoplaySpeed = scope.config.autoplaySpeed;
+                    intSlideBy = scope.config.slideBy;
+                    intMaxItemWindow = scope.config.items || 3;
+                    intStagePadding = scope.config.stagePadding || 0;
+                    intDotsEach = scope.config.dotsEach || intMaxItemWindow;
+                    intDotsSpeed = scope.config.dotsSpeed || 250;
+                    intMarginPerItem = scope.config.margin;
+                    bolPullDrag = scope.config.pullDrag;
+                    intDragEndSpeed = scope.config.dragEndSpeed || 250;
+                    arrNavText = scope.config.navText;
+                    intNavSpeed = scope.config.navSpeed || 250;
+                    bolEnableTouchDrag = scope.config.touchDrag === true;
+                    bolEnableMouseDrag = scope.config.mouseDrag === true;
+                    intStartPosition = scope.config.startPosition || 1;
+                    
+                    intItemsOnScreen = intItemCount < intMaxItemWindow ? intItemCount : intMaxItemWindow;
+                    intItemCount = scope.items.length;   
+                } catch (err) {
+                    console.log('ERR: error during initialization', err);
+                }
             }
 
             function InitElements() {
