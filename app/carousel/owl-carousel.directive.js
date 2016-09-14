@@ -483,11 +483,12 @@
 
                 function AutoplayMove() {
                     var intMaxIndex = intItemCount - intItemsOnScreen;
-                    intPosition += intSlideBy;
 
                     if (intPosition > intMaxIndex) {
                         intPosition = 0;
                     }
+                    
+                    intPosition += intSlideBy;
 
                     MoveToItem(intPosition, intAutoplaySpeed);
                 }

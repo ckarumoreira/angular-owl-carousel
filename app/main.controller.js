@@ -44,36 +44,36 @@
             dragEndSpeed: 1000,
             mouseDrag: true,
             touchDrag: true,
-            autoplay: false,
             pullDrag: true,
+            autoplay: true,
             autoplaySpeed: 2000,
             autoplayTimeout: 5000,
             autoplayHoverPause: true,
             responsive: {
                 0: {
+                    items: 1,
+                    slideBy: 1,
+                    dotsEach: 1
+                },
+                300: {
+                    items: 2,
+                    slideBy: 2,
+                    dotsEach: 2
+                },
+                500: {
                     items: 3,
                     slideBy: 3,
                     dotsEach: 3
                 },
-                300: {
+                700: {
                     items: 4,
                     slideBy: 4,
                     dotsEach: 4
                 },
-                500: {
+                900: {
                     items: 5,
                     slideBy: 5,
                     dotsEach: 5
-                },
-                700: {
-                    items: 6,
-                    slideBy: 6,
-                    dotsEach: 6
-                },
-                900: {
-                    items: 7,
-                    slideBy: 7,
-                    dotsEach: 7
                 }
             },
             navText: ['proxima', 'anterior']
