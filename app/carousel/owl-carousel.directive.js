@@ -94,11 +94,21 @@
 
                     if (objResponsiveConfig) {
                         for (var strSize in objResponsiveConfig) {
-                            debugger;
                             if (objResponsiveConfig.hasOwnProperty(strSize)) {
                                 var intSize = parseInt(strSize);
                                 if (intWindowWidth >= intSize) {
-                                    intItemsOnScreen = objResponsiveConfig[strSize].items;
+                                    if (typeof objResponsiveConfig[strSize].items !== undefined) {
+                                        intItemsOnScreen = objResponsiveConfig[strSize].items;
+                                    }
+
+                                    if (typeof objResponsiveConfig[strSize].slideBy !== undefined) {
+                                        intSlideBy = objResponsiveConfig[strSize].slideBy;
+                                    }
+
+                                    if (typeof objResponsiveConfig[strSize].intDotsEach !== undefined) {
+                                        intDotsEach = objResponsiveConfig[strSize].dotsEach;
+                                        InitDots();
+                                    }
                                 }
                             }
                         }
@@ -246,6 +256,13 @@
                     divOwlStage.bind('tapend', EndDrag);
                 }
 
+                function GetTranslation() {
+                    var strTransform = divOwlStage.css('transform'),
+                        strTranslateX = strTransform.split('(');
+
+                    return strTranslateX.length > 1 ? parseInt(strTranslateX[1]) : 0;
+                }
+
                 function StartDrag(event) {
                     // Event prevention and stop propagation
                     try {
@@ -259,6 +276,7 @@
                     try {
                         bolDragging = true;
                         intDragStart = event.screenX;
+                        intTranslateX = GetTranslation();
                         divOwlStage.css('transition', '0s');
                     } catch (err) {
                         console.log('ERR: drag event start', err);
@@ -266,9 +284,7 @@
                 }
 
                 function OnDrag(event) {
-                    var strTransform = undefined,
-                        strTranslateX = undefined,
-                        intDiff = undefined;
+                    var intDiff = undefined;
 
                     // Event prevention and stop propagation
                     try {
@@ -281,16 +297,13 @@
                     // Actual On Drag
                     try {
                         if (bolDragging) {
-                            strTransform = divOwlStage.css('transform');
-                            strTranslateX = strTransform.split('(');
-                            intDiff = intDragStart - (event.screenX || event.position.x || 0);
-
                             if (!bolDragged) {
                                 bolDragged = true;
                                 divContainer.addClass('owl-grab');
                             }
 
-                            intTranslateX = strTranslateX.length > 1 ? parseInt(strTranslateX[1]) : 0;
+                            intTranslateX = GetTranslation();
+                            intDiff = intDragStart - (event.screenX || event.position.x || 0);
                             intDragStart = event.screenX;
 
                             // Apply dragging restrictions.
@@ -337,10 +350,12 @@
                     // Actual Drag End
                     try {
                         if (bolDragging) {
-                            intTargetPosition = Math.abs(Math.round(intTranslateX / intOwlItemWholeWidth));
+                            if (typeof intTranslateX !== 'undefined') {
+                                intTargetPosition = Math.abs(Math.round(intTranslateX / intOwlItemWholeWidth));
 
-                            if (intTargetPosition > intItemCount - intMaxItemWindow) {
-                                intTargetPosition = intItemCount - intMaxItemWindow;
+                                if (intTargetPosition > intItemCount - intMaxItemWindow) {
+                                    intTargetPosition = intItemCount - intMaxItemWindow;
+                                }
                             }
 
                             // Apply the best translate.
@@ -348,8 +363,8 @@
 
                             // Reset values.    
                             bolDragging = false;
-                            intDragStart = 0;
-                            intTranslateX = 0;
+                            intDragStart = undefined;
+                            intTranslateX = undefined;
                             if (bolDragged) {
                                 $window.setTimeout(function () {
                                     divContainer.removeClass('owl-grab');
@@ -418,6 +433,8 @@
                     intDotCount = Math.ceil(intItemCount / intDotsEach),
                     intActiveDot = Math.ceil(intPosition / intDotsEach),
                     divCurrentDot = undefined;
+
+                divOwlDots.empty();
                 
                 if (bolEnableDots) {
                     for (var intCounter = 0; intCounter < intDotCount; intCounter++) {

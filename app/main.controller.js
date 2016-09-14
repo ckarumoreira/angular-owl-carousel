@@ -51,13 +51,29 @@
             autoplayHoverPause: true,
             responsive: {
                 0: {
-                    items: 3
+                    items: 3,
+                    slideBy: 3,
+                    dotsEach: 3
                 },
-                600: {
-                    items: 5
+                300: {
+                    items: 4,
+                    slideBy: 4,
+                    dotsEach: 4
+                },
+                500: {
+                    items: 5,
+                    slideBy: 5,
+                    dotsEach: 5
+                },
+                700: {
+                    items: 6,
+                    slideBy: 6,
+                    dotsEach: 6
                 },
                 900: {
-                    items: 7
+                    items: 7,
+                    slideBy: 7,
+                    dotsEach: 7
                 }
             },
             navText: ['proxima', 'anterior']
