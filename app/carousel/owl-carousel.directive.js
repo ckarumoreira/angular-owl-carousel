@@ -98,7 +98,8 @@
                                 var intSize = parseInt(strSize);
                                 if (intWindowWidth >= intSize) {
                                     if (typeof objResponsiveConfig[strSize].items !== undefined) {
-                                        intItemsOnScreen = objResponsiveConfig[strSize].items;
+                                        intMaxItemWindow = objResponsiveConfig[strSize].items;
+                                        intItemsOnScreen = intItemCount < intMaxItemWindow ? intItemCount : intMaxItemWindow;
                                     }
 
                                     if (typeof objResponsiveConfig[strSize].slideBy !== undefined) {
@@ -136,11 +137,14 @@
                     try {
                         if (bolPullDrag) {
                             intMaxTranslate = intOwlItemWholeWidth / 3;
-                            intMinTranslate = intOwlItemWholeWidth * (intMaxItemWindow - (1/3)) - intOwlStageWidth;
+                            intMinTranslate = (intOwlItemWholeWidth * (intMaxItemWindow - (1/3))) - intOwlStageWidth;
                         } else {
                             intMaxTranslate = 0;
                             intMinTranslate = (intOwlItemWholeWidth * intMaxItemWindow) - intOwlStageWidth;
-                        }   
+                        }
+
+                        console.log('max: ' + intMaxTranslate);
+                        console.log('min: ' + intMinTranslate);
                     } catch (err) {
                         console.log('ERR: it was not possible to calculate max translation', err);
                     }
