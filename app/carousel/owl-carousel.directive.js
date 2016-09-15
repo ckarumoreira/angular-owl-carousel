@@ -114,7 +114,7 @@
                 // Resize elements to fit the viewport
                 angular.element($window).bind('resize', function(){
                     SetItemSize();
-                    MoveToItem(intPosition);
+                    MoveToItem(intPosition, 1);
                     scope.$digest();
                 });
 
@@ -268,22 +268,14 @@
 
                 function StartDrag(event) {
                     // Event prevention and stop propagation
-                    try {
-                        event.stopPropagation();
-                        event.preventDefault();
-                    } catch (err) {
-                        console.log('ERR: drag has no mousedown event', err);
-                    }
+                    event.stopPropagation();
+                    event.preventDefault();
 
                     // Actual Drag Start event
-                    try {
-                        bolDragging = true;
-                        intDragStart = event.screenX || event.position.x || 0;
-                        intTranslateX = GetCurrentTranslation();
-                        divOwlStage.css('transition', '0s');
-                    } catch (err) {
-                        console.log('ERR: drag event start', err);
-                    }
+                    bolDragging = true;
+                    intDragStart = event.screenX || event.position.x || 0;
+                    intTranslateX = GetCurrentTranslation();
+                    divOwlStage.css('transition', '0s');
                 }
 
                 function OnDrag(event) {
