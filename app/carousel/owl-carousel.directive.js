@@ -114,6 +114,7 @@
                 // Resize elements to fit the viewport
                 angular.element($window).bind('resize', function(){
                     SetItemSize();
+                    MoveToItem(intPosition);
                     scope.$digest();
                 });
 
