@@ -7,6 +7,11 @@ A full port of current version of OwlCarousel2 (JQuery-less, using only jqLite f
 * OwlCarousel2 (CSS only)
 * AngularJS
 
+# Initialize Repo
+```bash
+bower install
+```
+
 # Usage
 ```html
 <!-- apply "owl-carousel" with its config and items -->
@@ -31,6 +36,7 @@ A full port of current version of OwlCarousel2 (JQuery-less, using only jqLite f
 * dragEndSpeed
 * slideBy
 * autoplay
+* responsive
 * autoplaySpeed
 * autoplayTimeout
 * autoplayHoverPause
@@ -50,7 +56,6 @@ A full port of current version of OwlCarousel2 (JQuery-less, using only jqLite f
 * smartSpeed
 * fluidSpeed
 * callbacks
-* responsive
 * responsiveRefreshRate
 * responsiveBaseElement
 * responsiveClass
