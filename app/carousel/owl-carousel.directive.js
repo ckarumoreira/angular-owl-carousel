@@ -268,9 +268,17 @@
 
                 function GetCurrentTranslation() {
                     var strTransform = divOwlStage.css('transform'),
-                        strTranslateX = strTransform.split('(');
+                        strMarginLeft = divOwlStage.css('margin-left'),
+                        strTranslateX = strTransform ? strTransform.split('(') : undefined,
+                        intTranslationNumber = undefined;
 
-                    return strTranslateX.length > 1 ? parseInt(strTranslateX[1]) : 0;
+                    if (navigator.userAgent.indexOf('MSIE') !== -1 || navigator.appVersion.indexOf('Trident/') > 0) {
+                        intTranslationNumber = typeof strMarginLeft !== 'undefined' ? parseInt(strMarginLeft) : 0;
+                    } else {
+                        intTranslationNumber = strTranslateX.length > 1 ? parseInt(strTranslateX[1]) : 0;
+                    }
+
+                    return intTranslationNumber;
                 }
 
                 function StartDrag(event) {
@@ -322,10 +330,10 @@
                         }
 
                         // Apply drag.
-                        divOwlStage.css('transform', 'translateX(' + intCurrentPosition + 'px)');
-
-                        if ($window.navigator.appName.indexOf('Internet Explorer') > 0) {
+                        if (navigator.userAgent.indexOf('MSIE') !== -1 || navigator.appVersion.indexOf('Trident/') > 0) {
                             divOwlStage.css('margin-left', intCurrentPosition + 'px');
+                        } else {
+                            divOwlStage.css('transform', 'translateX(' + intCurrentPosition + 'px)');
                         }
 
                         intTranslateX = intCurrentPosition;
@@ -526,9 +534,10 @@
 
                 function TranslateXAxisTo(intXAxis, strTransitionSpeed) {
                     divOwlStage.css('transition', strTransitionSpeed || '0s');
-                    divOwlStage.css('transform', 'translateX(' + intXAxis + 'px)');
-                    if ($window.navigator.appName.indexOf('Internet Explorer') > 0) {
+                    if (navigator.userAgent.indexOf('MSIE') !== -1 || navigator.appVersion.indexOf('Trident/') > 0) {
                         divOwlStage.css('margin-left', intXAxis + 'px');
+                    } else {
+                        divOwlStage.css('transform', 'translateX(' + intXAxis + 'px)');
                     }
                 }
             }
