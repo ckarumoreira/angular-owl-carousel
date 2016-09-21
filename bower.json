@@ -13,8 +13,9 @@
     "tests"
   ],
   "dependencies": {
+    "angular": "1.2.30",
     "jquery": "^3.1.0",
-    "angular": "^1.5.8",
-    "owl.carousel": "^2.1.6"
+    "owl.carousel": "^2.1.6",
+    "es5-shim": "^4.5.9"
   }
 }

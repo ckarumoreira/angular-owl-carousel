@@ -122,6 +122,10 @@
                 function SetItemSize() {
                     var intWindowWidth = $window.innerWidth;
 
+                    if (typeof intWindowWidth === 'undefined') {
+                        intWindowWidth = window.document.documentElement.clientWidth;
+                    }
+
                     // Set responsive configuration
                     if (objResponsiveConfig) {
                         for (var intSize in objResponsiveConfig) {
@@ -251,6 +255,9 @@
                         .bind('mouseleave', EndDrag);
                 }
 
+                divOwlStage
+                    .css('-ms-filter', '"progid:DXImageTransform.Microsoft.Matrix(M11=1, M12=0, M21=0, M22=1, SizingMethod=' + "'auto expand'" + ')";');
+
                 // Init touch events.
                 if (bolEnableTouchDrag) {
                     divOwlStage
@@ -316,6 +323,11 @@
 
                         // Apply drag.
                         divOwlStage.css('transform', 'translateX(' + intCurrentPosition + 'px)');
+
+                        if ($window.navigator.appName.indexOf('Internet Explorer') > 0) {
+                            divOwlStage.css('margin-left', intCurrentPosition + 'px');
+                        }
+
                         intTranslateX = intCurrentPosition;
                     }
                 }
@@ -416,8 +428,7 @@
             }
 
             function InitDots() {
-                var intDotCount = Math.ceil(intItemCount / intDotsEach),
-                    intActiveDot = Math.ceil(intPosition / intDotsEach);
+                var intDotCount = Math.ceil(intItemCount / intDotsEach);
 
                 divOwlDots.empty();
                 
@@ -428,16 +439,14 @@
                 }
 
                 function CreateDot(intDotNumber) {
-                    var strDivDotElement = '<div class="owl-dot"><span></span></div>',
-                        divCurrentDot = angular.element(strDivDotElement);
+                    var divCurrentDot = angular.element('<div class="owl-dot"><span></span></div>');
                     
                     divCurrentDot.data('dot-position', intDotNumber);
                     divCurrentDot.bind('click', OnDotClick);
                     divOwlDots.append(divCurrentDot);
 
                     function OnDotClick() {
-                        var divDot = angular.element(this),
-                            intDotPosition = divDot.data('dot-position');    
+                        var intDotPosition = angular.element(this).data('dot-position');    
                         MoveToItem(intDotsEach * intDotPosition, intDotsSpeed);
                     }
                 }
@@ -466,14 +475,11 @@
                 }
 
                 function AutoplayMove() {
-                    var intMaxIndex = intItemCount - intItemsOnScreen;
-
-                    if (intPosition > intMaxIndex) {
+                    if (intPosition > (intItemCount - intItemsOnScreen)) {
                         intPosition = 0;
                     }
                     
                     intPosition += intSlideBy;
-
                     MoveToItem(intPosition, intAutoplaySpeed);
                 }
             }
@@ -485,7 +491,6 @@
 
                 ActivateItems(intTargetPosition, intTargetPosition + intItemsOnScreen);
                 TranslateXAxisTo(intTranslation, (intSpeed || 250) + 'ms');
-                
                 intPosition = intTargetPosition;
                 
                 for (var intCounter = 0, intLength = arrDivDots.length; intCounter < intLength; intCounter++) {
@@ -502,24 +507,29 @@
                 }
 
                 function ActivateItems(intStartIndex, intEndIndex) {
-                    var arrItems = divOwlStage.children(),
-                        divOwlCurrentItem = undefined;
+                    var arrItems = divOwlStage.children();
 
                     for (var intCount = 0; intCount < intItemCount; intCount++) {
-                        divOwlCurrentItem = angular.element(arrItems[intCount]);
+                        UpdateItem(arrItems[intCount]);
+                    }
+
+                    function UpdateItem(divItem) {
+                        var divOwlCurrentItem = angular.element(divItem);
+
                         if (intCount >= intStartIndex && intCount < intEndIndex) {
                             divOwlCurrentItem.addClass('active');
                         } else {
                             divOwlCurrentItem.removeClass('active');
                         }
                     }
-
-                    intPosition = intStartIndex;
                 }
 
                 function TranslateXAxisTo(intXAxis, strTransitionSpeed) {
                     divOwlStage.css('transition', strTransitionSpeed || '0s');
                     divOwlStage.css('transform', 'translateX(' + intXAxis + 'px)');
+                    if ($window.navigator.appName.indexOf('Internet Explorer') > 0) {
+                        divOwlStage.css('margin-left', intXAxis + 'px');
+                    }
                 }
             }
         }

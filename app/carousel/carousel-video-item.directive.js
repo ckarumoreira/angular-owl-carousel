@@ -7,14 +7,18 @@
         return {
             restrict: 'A',
             scope: {
-                url: '=',
-                thumbnail: '=',
-                display: '='
+                item: '='
             },
             template: '<img ng-src="{{ thumbnail }}" display="title" />',
             link: function (scope, element, attrs, controller) {
                 var divTemplate = element,
-                    divTitleHolder = angular.element($compile('<div class="title-holder" style="display: none;" ng-bind="display"></div>')(scope));
+                    divTitleHolder = undefined;
+                
+                scope.url = scope.item.url;
+                scope.thumbnail = scope.item.thumbnail;
+                scope.display = scope.item.display;
+
+                divTitleHolder = angular.element($compile('<div class="title-holder" ng-bind="display"></div>')(scope));
 
                 divTemplate.bind('click', Click);
                 divTemplate.bind('mousemove', StartHover);
@@ -35,6 +39,11 @@
                     'font-size': '32px',
                     'transition': '0.5s',
                     'font-family': 'sans-serif'
+                });
+
+                angular.element($window).bind('resize', function() {
+                    EndHover();
+                    divTitleHolder.css('display', 'none');
                 });
 
                 function EndHover() {

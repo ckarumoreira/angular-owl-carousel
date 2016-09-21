@@ -7,7 +7,7 @@
         return { 
             get: function (strItemType, objScope) {
                 var strDirectiveAttribute = GetCarouselItemDirective(strItemType);
-                var divCarouselItem = $compile('<div ' + strDirectiveAttribute + ' url="item.url" thumbnail="item.thumbnail" display="item.display"></div>')(objScope);
+                var divCarouselItem = $compile('<div ' + strDirectiveAttribute + ' item="item"></div>')(objScope);
                 return divCarouselItem;
             }
         }
