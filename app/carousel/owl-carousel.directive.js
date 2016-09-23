@@ -56,11 +56,11 @@
             // Apply templates and everything related to item config
             InitItems(scope.items);
 
-            // Enable navigation next/prev
-            InitNav();
-
             // Enable dragging
             InitStage();
+
+            // Enable navigation next/prev
+            InitNav();
 
             // Load carousel
             InitCarousel();
@@ -273,8 +273,10 @@
                         intTranslationNumber = undefined;
 
                     if (navigator.userAgent.indexOf('MSIE') !== -1 || navigator.appVersion.indexOf('Trident/') > 0) {
+                        // IE translation.
                         intTranslationNumber = typeof strMarginLeft !== 'undefined' ? parseInt(strMarginLeft) : 0;
                     } else {
+                        // Other browsers translation.
                         intTranslationNumber = strTranslateX.length > 1 ? parseInt(strTranslateX[1]) : 0;
                     }
 
