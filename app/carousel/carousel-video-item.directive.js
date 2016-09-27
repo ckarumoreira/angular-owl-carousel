@@ -52,6 +52,10 @@
                         'display': 'block',
                         'transform': 'translateY(' + intHeight + 'px)'
                     });
+
+                    if (navigator.userAgent.indexOf('MSIE') !== -1 && parseInt(navigator.userAgent.split('MSIE')[1]) < 10) {
+                        divTitleHolder.css('display', 'none');
+                    }
                 }
 
                 function StartHover() {
@@ -68,7 +72,7 @@
                         divContainer = divOwlStageOuter.parent();
 
                     if (!divContainer.hasClass('owl-grab')) {
-                        $window.open(scope.url, '_blank');
+                        scope.item.action();
                     }
                 }
             }

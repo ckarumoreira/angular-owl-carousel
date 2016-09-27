@@ -11,23 +11,26 @@
             new Video('https://www.youtube.com/watch?v=4', 'carousel/img/300x150.png', '4'),
             new Video('https://www.youtube.com/watch?v=5', 'carousel/img/300x150.png', '5'),
             new Video('https://www.youtube.com/watch?v=6', 'carousel/img/300x150.png', '6'),
+            
             new Video('https://www.youtube.com/watch?v=7', 'carousel/img/300x150.png', '7'),
-
             new Video('https://www.youtube.com/watch?v=8', 'carousel/img/300x150.png', '8'),
             new Video('https://www.youtube.com/watch?v=9', 'carousel/img/300x150.png', '9'),
             new Video('https://www.youtube.com/watch?v=10', 'carousel/img/300x150.png', '10'),
             new Video('https://www.youtube.com/watch?v=11', 'carousel/img/300x150.png', '11'),
             new Video('https://www.youtube.com/watch?v=12', 'carousel/img/300x150.png', '12'),
+
             new Video('https://www.youtube.com/watch?v=13', 'carousel/img/300x150.png', '13'),
             new Video('https://www.youtube.com/watch?v=14', 'carousel/img/300x150.png', '14'),
-
             new Video('https://www.youtube.com/watch?v=15', 'carousel/img/300x150.png', '15'),
             new Video('https://www.youtube.com/watch?v=15', 'carousel/img/300x150.png', '16'),
             new Video('https://www.youtube.com/watch?v=15', 'carousel/img/300x150.png', '17'),
             new Video('https://www.youtube.com/watch?v=15', 'carousel/img/300x150.png', '18'),
+
             new Video('https://www.youtube.com/watch?v=15', 'carousel/img/300x150.png', '19'),
             new Video('https://www.youtube.com/watch?v=15', 'carousel/img/300x150.png', '20'),
-            new Video('https://www.youtube.com/watch?v=15', 'carousel/img/300x150.png', '21')
+            new Video('https://www.youtube.com/watch?v=15', 'carousel/img/300x150.png', '21'),
+            new Video('https://www.youtube.com/watch?v=15', 'carousel/img/300x150.png', '22'),
+            new Video('https://www.youtube.com/watch?v=15', 'carousel/img/300x150.png', '23')
         ];  
 
         $scope.carouselConfig = {
@@ -51,32 +54,32 @@
             autoplayHoverPause: true,
             responsive: {
                 0: {
-                    items: 1,
-                    slideBy: 1,
-                    dotsEach: 1
-                },
-                300: {
                     items: 2,
                     slideBy: 2,
                     dotsEach: 2
                 },
-                500: {
+                300: {
                     items: 3,
                     slideBy: 3,
                     dotsEach: 3
                 },
-                700: {
+                500: {
                     items: 4,
                     slideBy: 4,
                     dotsEach: 4
                 },
-                900: {
+                700: {
                     items: 5,
                     slideBy: 5,
                     dotsEach: 5
+                },
+                900: {
+                    items: 6,
+                    slideBy: 6,
+                    dotsEach: 6
                 }
             },
-            navText: ['proxima', 'anterior']
+            navText: ['next page', 'previous page']
         };
     }
 
@@ -87,5 +90,8 @@
         this.thumbnail = thumbnail;
         this.display = display;
         this.duration = duration;
+        this.action = function () {
+            open(url, '_blank');
+        };
     }
 })();

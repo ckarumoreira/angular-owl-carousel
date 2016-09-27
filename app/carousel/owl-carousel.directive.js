@@ -15,9 +15,9 @@
                 intMarginPerItem = undefined,
                 objResponsiveConfig = undefined,
                 // autoplay variables
-                bolAutoplay = undefined,
+                bolEnableAutoplay = undefined,
                 objAutoplayInterval = undefined,
-                bolAutoplayHoverPause = undefined,
+                bolEnableAutoplayHoverPause = undefined,
                 intAutoplayTimeout = undefined,
                 intAutoplaySpeed = undefined,
                 // count variables
@@ -31,7 +31,7 @@
                 // drag variables
                 bolEnableTouchDrag = undefined,
                 bolEnableMouseDrag = undefined,
-                bolPullDrag = undefined,
+                bolEnablePullDrag = undefined,
                 intMaxTranslate = undefined,
                 intMinTranslate = undefined,
                 intDragEndSpeed = undefined,
@@ -78,32 +78,44 @@
             InitAutoplay();
 
             function InitOwlConfig() {
+
                 try {
-                    bolEnableDots = scope.config.dots === true;
-                    bolEnableNav = scope.config.nav === true;
-                    bolAutoplayHoverPause = scope.config.autoplayHoverPause;
-                    bolAutoplay = scope.config.autoplay;
-                    intAutoplayTimeout = scope.config.autoplayTimeout;
-                    intAutoplaySpeed = scope.config.autoplaySpeed;
-                    intSlideBy = scope.config.slideBy;
-                    intMaxItemWindow = scope.config.items || 3;
-                    intStagePadding = scope.config.stagePadding || 0;
-                    intDotsEach = scope.config.dotsEach || intMaxItemWindow;
-                    intDotsSpeed = scope.config.dotsSpeed || 250;
-                    intMarginPerItem = scope.config.margin;
-                    bolPullDrag = scope.config.pullDrag;
-                    intDragEndSpeed = scope.config.dragEndSpeed || 250;
-                    arrNavText = scope.config.navText;
-                    intNavSpeed = scope.config.navSpeed || 250;
-                    bolEnableTouchDrag = scope.config.touchDrag === true;
-                    bolEnableMouseDrag = scope.config.mouseDrag === true;
-                    intStartPosition = scope.config.startPosition || 1;
-                    objResponsiveConfig = scope.config.responsive;
+                    // features
+                    bolEnableDots =               GetConfigValue(scope.config.dots, scope.config.dots === true, true);
+                    bolEnableNav =                GetConfigValue(scope.config.nav, scope.config.nav === true, true);
+                    bolEnableAutoplay =           GetConfigValue(scope.config.autoplay, scope.config.autoplay === true, false);
+                    bolEnableTouchDrag =          GetConfigValue(scope.config.touchDrag, scope.config.touchDrag === true, true);
+                    bolEnableMouseDrag =          GetConfigValue(scope.config.mouseDrag, scope.config.mouseDrag === true, true);
+                    bolEnablePullDrag =           GetConfigValue(scope.config.pullDrag, scope.config.pullDrag === true, false);
+                    bolEnableAutoplayHoverPause = GetConfigValue(scope.config.autoplayHoverPause, scope.config.autoplayHoverPause === true, false);
+                    // speed
+                    intDotsSpeed =                GetConfigValue(scope.config.dotsSpeed, scope.config.dotsSpeed, 250);
+                    intDragEndSpeed =             GetConfigValue(scope.config.dragEndSpeed, scope.config.dragEndSpeed, 250);
+                    intNavSpeed =                 GetConfigValue(scope.config.navSpeed, scope.config.navSpeed, 250);
+                    intAutoplaySpeed =            GetConfigValue(scope.config.autoplaySpeed, scope.config.autoplaySpeed, 250);
+                    // 
+                    intMaxItemWindow =            GetConfigValue(scope.config.items, scope.config.items, 3);
+                    intDotsEach =                 GetConfigValue(scope.config.dotsEach, scope.config.dotsEach, intMaxItemWindow);
+                    intStartPosition =            GetConfigValue(scope.config.startPosition, scope.config.startPosition, 1);
+                    intAutoplayTimeout =          GetConfigValue(scope.config.autoplayTimeout, scope.config.autoplayTimeout, 5000);
+                    intSlideBy =                  GetConfigValue(scope.config.slideBy, scope.config.slideBy, 1);
+                    intStagePadding =             GetConfigValue(scope.config.stagePadding, scope.config.stagePadding, 0);
+                    intMarginPerItem =            GetConfigValue(scope.config.margin, scope.config.margin, 0);
+                    //
+                    arrNavText =                  GetConfigValue(scope.config.navText, scope.config.navText, [ 'next', 'prev' ]);
+                    objResponsiveConfig =         GetConfigValue(scope.config.responsive, scope.config.responsive, {});
                     
+                    intItemCount = typeof scope.items === undefined ? 0 : scope.items.length;  
                     intItemsOnScreen = intItemCount < intMaxItemWindow ? intItemCount : intMaxItemWindow;
-                    intItemCount = scope.items.length;  
                 } catch (err) {
                     console.log('ERR: error during initialization', err);
+                }
+
+                function GetConfigValue(config, configValue, defaultValue) { 
+                    if (typeof config === 'undefined') {
+                        return defaultValue;
+                    }
+                    return configValue;
                 }
             }
 
@@ -157,7 +169,7 @@
                     }
 
                     function DefineTranslateLimits() {
-                        if (bolPullDrag) {
+                        if (bolEnablePullDrag) {
                             intMaxTranslate = intOwlItemWholeWidth / 3;
                             intMinTranslate = (intOwlItemWholeWidth * (intMaxItemWindow - (1/3))) - intOwlStageWidth;
                         } else {
@@ -191,7 +203,7 @@
                             intDotsEach = intResponsiveDotsEach;
                             InitDots();
                         }
-                    }   
+                    }
                 }
             }
 
@@ -307,7 +319,7 @@
                     }
 
                     // Autoplay pause.
-                    if (bolAutoplay && bolAutoplayHoverPause) {
+                    if (bolEnableAutoplay && bolEnableAutoplayHoverPause) {
                         $window.clearInterval(objAutoplayInterval);
                     }
 
@@ -344,7 +356,7 @@
 
                 function EndDrag() {
                     // Autoplay restart
-                    if (bolAutoplayHoverPause) {
+                    if (bolEnableAutoplayHoverPause) {
                         InitAutoplay();
                     }
                     
@@ -480,7 +492,7 @@
             }
 
             function InitAutoplay() {
-                if (bolAutoplay) {
+                if (bolEnableAutoplay) {
                     objAutoplayInterval = setInterval(AutoplayMove, intAutoplayTimeout);
                 }
 
@@ -536,7 +548,7 @@
 
                 function TranslateXAxisTo(intXAxis, strTransitionSpeed) {
                     divOwlStage.css('transition', strTransitionSpeed || '0s');
-                    if (navigator.userAgent.indexOf('MSIE') !== -1 || navigator.appVersion.indexOf('Trident/') > 0) {
+                    if (navigator.userAgent.indexOf('MSIE') !== -1 && parseInt(navigator.userAgent.split('MSIE')[1]) < 10) {
                         divOwlStage.css('margin-left', intXAxis + 'px');
                     } else {
                         divOwlStage.css('transform', 'translateX(' + intXAxis + 'px)');
