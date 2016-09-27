@@ -238,7 +238,7 @@
                     // Append to templated item to owl-item.
                     divOwlItem
                         .append(divCarouselItem)
-                        .css('margin-right', intMarginPerItem);
+                        .css('margin-right', intMarginPerItem + 'px');
 
                     // Append owl-item to stage.
                     divOwlStage.append(divOwlItem);
