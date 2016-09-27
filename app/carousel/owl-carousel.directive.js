@@ -267,8 +267,10 @@
                         .bind('mouseleave', EndDrag);
                 }
 
-                divOwlStage
-                    .css('-ms-filter', '"progid:DXImageTransform.Microsoft.Matrix(M11=1, M12=0, M21=0, M22=1, SizingMethod=' + "'auto expand'" + ')";');
+                if (!IsInternetExplorer(10)) {
+                    divOwlStage
+                        .css('-ms-filter', '"progid:DXImageTransform.Microsoft.Matrix(M11=1, M12=0, M21=0, M22=1, SizingMethod=' + "'auto expand'" + ')";');
+                }
 
                 // Init touch events.
                 if (bolEnableTouchDrag) {
@@ -284,7 +286,7 @@
                         strTranslateX = strTransform ? strTransform.split('(') : undefined,
                         intTranslationNumber = undefined;
 
-                    if (navigator.userAgent.indexOf('MSIE') !== -1 || navigator.appVersion.indexOf('Trident/') > 0) {
+                    if (!IsInternetExplorer(10)) {
                         // IE translation.
                         intTranslationNumber = typeof strMarginLeft !== 'undefined' ? parseInt(strMarginLeft) : 0;
                     } else {
@@ -344,7 +346,7 @@
                         }
 
                         // Apply drag.
-                        if (navigator.userAgent.indexOf('MSIE') !== -1 || navigator.appVersion.indexOf('Trident/') > 0) {
+                        if (!IsInternetExplorer(10)) {
                             divOwlStage.css('margin-left', intCurrentPosition + 'px');
                         } else {
                             divOwlStage.css('transform', 'translateX(' + intCurrentPosition + 'px)');
@@ -548,13 +550,27 @@
 
                 function TranslateXAxisTo(intXAxis, strTransitionSpeed) {
                     divOwlStage.css('transition', strTransitionSpeed || '0s');
-                    if (navigator.userAgent.indexOf('MSIE') !== -1 && parseInt(navigator.userAgent.split('MSIE')[1]) < 10) {
+                    if (!IsInternetExplorer(10)) {
                         divOwlStage.css('margin-left', intXAxis + 'px');
                     } else {
                         divOwlStage.css('transform', 'translateX(' + intXAxis + 'px)');
                     }
                 }
             }
+        }
+
+        // Check if browser is Internet Explorer (or if is this version or greater).
+        function IsInternetExplorer(intVersion) {
+            var bolIsInternetExplorer = $window.navigator.userAgent.indexOf('MSIE') !== -1,
+                bolFilterVersion = typeof intVersion !== 'undefined',
+                intInternetExplorerVersion = undefined;
+
+            if (bolIsInternetExplorer && bolFilterVersion) {
+                intInternetExplorerVersion = parseInt(navigator.userAgent.split('MSIE')[1]);
+                return intInternetExplorerVersion >= intVersion;
+            }
+
+            return bolIsInternetExplorer;
         }
 
         return {
